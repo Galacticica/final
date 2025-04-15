@@ -1,5 +1,7 @@
 import discord
 from discord.ext import commands
+import os
+from dotenv import load_dotenv
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -7,8 +9,7 @@ intents.message_content = True
 bot = commands.Bot(command_prefix='$', intents=intents)
 dev_guild = discord.Object(id=756190406642761869)
 
-with open("token.txt", "r") as file:
-    token = file.read().strip()
+
 
 @bot.event
 async def on_ready():
@@ -53,4 +54,8 @@ async def clear(ctx):
     except Exception as e:
         print(f"Error clearing commands: {e}")
 
+load_dotenv()
+token = os.getenv("DISCORD_TOKEN")
+if not token:
+    raise ValueError("Discord token not found in .env file!")
 bot.run(token)

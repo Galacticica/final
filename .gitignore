@@ -11,4 +11,4 @@ wheels/
 
 *.sqlite3
 
-token.txt
+.env
