@@ -7,6 +7,9 @@ intents.message_content = True
 bot = commands.Bot(command_prefix='$', intents=intents)
 dev_guild = discord.Object(id=756190406642761869)
 
+with open("token.txt", "r") as file:
+    token = file.read().strip()
+
 @bot.event
 async def on_ready():
     print("Setting bot presence...")
@@ -50,4 +53,4 @@ async def clear(ctx):
     except Exception as e:
         print(f"Error clearing commands: {e}")
 
-bot.run('NzU2MTkyMTk3OTY3MDg1NzY3.GxXtKf.eQgewvU7B5gsp5vXsn8eiFX92CaEyczT7J4ai4')
+bot.run(token)
