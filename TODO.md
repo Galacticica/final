@@ -16,3 +16,14 @@
 - blackjack
 - high card
 - etc.
+
+# Website Aspects
+
+## Leaderboard
+- money
+- xp
+- adventures?
+
+## Interactive
+- daily wheel spin or some other money making feature
+
