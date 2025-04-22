@@ -1,3 +1,11 @@
+"""
+File: main.py
+Author: Reagan Zierke
+Date: 2025-04-22
+Description: Discord bot main file.
+"""
+
+
 import discord
 from discord.ext import commands
 import os
