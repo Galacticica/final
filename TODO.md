@@ -9,8 +9,10 @@
 - If time interactive adventures with user choices
 
 ## Leveling
-- Different levels could be melee weaponry, ranged weaponry, navigation, piloting, etc
-- Levels factor into success chance for each type of adventure, each having a different equation
+- Level determines which adventures are available
+
+## Skill Points
+- Skillpoints are obtained through equipping gear
 
 ## Shop
 - Money can be spent on things such as xp boosts, weapons?, vehicles?, crew?, armor?
