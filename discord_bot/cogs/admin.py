@@ -7,6 +7,7 @@ Description: Developer commands for the bot.
 
 
 from discord.ext import commands
+import discord
 
 class Admin(commands.Cog):
     def __init__(self, bot, dev_guild_id=756190406642761869):
@@ -25,7 +26,8 @@ class Admin(commands.Cog):
 
         try:
             print("Syncing commands...")
-            synced = await self.bot.tree.sync()
+            guild = discord.Object(id=self.dev_guild_id)
+            synced = await self.bot.tree.sync(guild=guild)
             await ctx.send(f"Synced {len(synced)} commands.")
         except Exception as e:
             await ctx.send(f"Error syncing commands: {e}")
@@ -33,18 +35,19 @@ class Admin(commands.Cog):
     @commands.command(name="clear", description="Clear all slash commands")
     @commands.is_owner()
     async def clear(self, ctx):
-
         '''
         Clears all slash commands from the bot.
         '''
 
         try:
             print("Clearing commands...")
-            await self.bot.tree.clear_commands()
-            await self.bot.tree.sync()
-            await ctx.send("All commands cleared.")
+            guild = discord.Object(id=self.dev_guild_id)
+            self.bot.tree.clear_commands(guild=guild)
+            await self.bot.tree.sync(guild=guild)
+            await ctx.send("All commands cleared for the development guild.")
         except Exception as e:
             await ctx.send(f"Error clearing commands: {e}")
+
 
 async def setup(bot):
     await bot.add_cog(Admin(bot))
