@@ -7,6 +7,7 @@ Description: Developer commands for the bot.
 
 
 from discord.ext import commands
+import aiohttp
 import discord
 
 class Admin(commands.Cog):
@@ -47,6 +48,73 @@ class Admin(commands.Cog):
             await ctx.send("All commands cleared for the development guild.")
         except Exception as e:
             await ctx.send(f"Error clearing commands: {e}")
+
+    
+    @commands.command(name="get_or_create_user", description="Get or create a user via the API")
+    async def get_or_create_user(self, ctx):
+        """
+        Command to interact with the API and either get or create a user.
+        """
+        discord_id = ctx.author.id  
+        discord_username = ctx.author.name  
+        api_url = "http://127.0.0.1:8000/users/" 
+
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.post(api_url, json={"discord_id": discord_id, "username": discord_username}) as response:
+                    if response.status in (200, 201): 
+                        data = await response.json()
+                        await ctx.send(
+                            f"User data: Username: {data['username']}, Level: {data['level']}, XP: {data['xp']}, Money: {data['money']}"
+                        )
+                    else:
+                        error_message = await response.text()
+                        await ctx.send(f"Failed to get or create user: {error_message}")
+            except aiohttp.ClientError as e:
+                await ctx.send(f"An error occurred while communicating with the API: {e}")
+
+    @commands.command(name="give_money", description="Give money to a user")
+    @commands.is_owner()
+    async def give_money(self, ctx, user: discord.User, amount: int):
+        """
+        Give money to a user.
+        """
+        if amount <= 0:
+            await ctx.send("Amount must be a positive integer.")
+            return
+
+        discord_id = str(user.id)
+        api_url = f"http://127.0.0.1:8000/users/give_money/"
+        payload = {
+            "discord_id": discord_id,
+            "amount": amount
+        }
+
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.post(api_url, json=payload) as response:
+                    if response.status == 200:
+                        try:
+                            data = await response.json()
+                            message = data.get("message", "Something went wrong.")
+                            await ctx.send(message)
+                        except aiohttp.ContentTypeError:
+                            # Handle non-JSON response
+                            text = await response.text()
+                            await ctx.send(f"Unexpected response from the API: {text}")
+                    elif response.status == 400:
+                        try:
+                            error = await response.json()
+                            await ctx.send(f"Error: {error.get('error', 'Invalid request.')}")
+                        except aiohttp.ContentTypeError:
+                            # Handle non-JSON error response
+                            text = await response.text()
+                            await ctx.send(f"Error: {text}")
+                    else:
+                        await ctx.send("An unexpected error occurred. Please try again later.")
+            except aiohttp.ClientError as e:
+                await ctx.send(f"An error occurred while communicating with the API: {e}")
+    
 
 
 async def setup(bot):
