@@ -6,7 +6,6 @@ Description: Model for adventures in the bot.
 This model represents an adventure that can be completed by a user.
 """
 
-
 from django.db import models
 
 class Adventure(models.Model):

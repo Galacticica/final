@@ -1,5 +1,10 @@
 from django.db import models
 from adventures.models import Adventure
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
+
 
 class CustomUser(models.Model):
     discord_id = models.CharField(max_length=255, unique=True)
@@ -8,12 +13,14 @@ class CustomUser(models.Model):
     xp = models.IntegerField(default=0)
     money = models.IntegerField(default=100)
 
+    current_adventure: 'ReverseOneToOneDescriptor'
+
     def __str__(self):
         return self.username
     
 
 class CurrentAdventure(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='current_adventure')
     adventure = models.ForeignKey(Adventure, on_delete=models.CASCADE)
     time_left = models.IntegerField(default=0)  
 
