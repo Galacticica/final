@@ -1,9 +1,8 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import CustomUser
-from .serializers import CustomUserSerializer
+from . import serializers as cereal
 import random
 
 
@@ -24,7 +23,7 @@ class GetOrCreateUserView(APIView):
             }
         )
 
-        serializer = CustomUserSerializer(user)
+        serializer = cereal.CustomUserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
 
 class GiveMoneyView(APIView):
@@ -53,46 +52,38 @@ class GiveMoneyView(APIView):
 
 class CoinFlipBetView(APIView):
     def post(self, request):
-        discord_id = request.data.get('discord_id')
-        username = request.data.get('username')
-        bet = request.data.get('bet')
-        side = request.data.get('side')
+        s = cereal.CoinFlipBetSerializer(data=request.data)
+        if s.is_valid():
+            bet = s.data.get('bet')
+            side = s.data.get('side')
 
-        if not discord_id or not bet or not side:
-            return Response({"error": "discord_id, bet, and side are required"}, status=status.HTTP_400_BAD_REQUEST)
+            result = random.choice(["heads", "tails"])
+            if result == side.lower():
+                s.user.money += bet  
+                message = f"You won! The coin landed on {result}. Your new balance is {s.user.money}."
+            else:
+                s.user.money -= bet 
+                message = f"You lost! The coin landed on {result}. Your new balance is {s.user.money}."
 
-        if side.lower() not in ["heads", "tails"]:
-            return Response({"error": "Invalid side. Choose 'heads' or 'tails'."}, status=status.HTTP_400_BAD_REQUEST)
+            s.user.save()
 
-        try:
-            bet = int(bet)
-            if bet <= 0:
-                return Response({"error": "Bet must be a positive integer."}, status=status.HTTP_400_BAD_REQUEST)
-        except ValueError:
-            return Response({"error": "Bet must be an integer."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": message, "balance": s.user.money}, status=status.HTTP_200_OK)
 
-        # Get or create the user
-        user, created = CustomUser.objects.get_or_create(
-            discord_id=discord_id,
-            defaults={
-                "username": username,
-                "level": 1,
-                "xp": 0,
-                "money": 100,
-            }
-        )
-
-        if user.money < bet:
-            return Response({"error": "Insufficient funds."}, status=status.HTTP_400_BAD_REQUEST)
-
-        result = random.choice(["heads", "tails"])
-        if result == side.lower():
-            user.money += bet  
-            message = f"You won! The coin landed on {result}. Your new balance is {user.money}."
         else:
-            user.money -= bet 
-            message = f"You lost! The coin landed on {result}. Your new balance is {user.money}."
+            return Response({"error": s.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-        user.save()
+class DeleteUserView(APIView):
+    def delete(self, request):
+        discord_id = request.data.get('discord_id')
 
-        return Response({"message": message, "balance": user.money}, status=status.HTTP_200_OK)
+        if not discord_id:
+            return Response({"error": "discord_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = CustomUser.objects.filter(discord_id=discord_id).first()
+        if not user:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        user.delete()
+        return Response({"message": "User successfully deleted."}, status=status.HTTP_200_OK)
+
+

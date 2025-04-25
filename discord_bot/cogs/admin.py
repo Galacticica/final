@@ -27,8 +27,11 @@ class Admin(commands.Cog):
 
         try:
             print("Syncing commands...")
-            guild = discord.Object(id=self.dev_guild_id)
-            synced = await self.bot.tree.sync(guild=guild)
+            commands_to_sync = self.bot.tree.get_commands()
+            command_names = [command.name for command in commands_to_sync]
+            await ctx.send(f"Commands to sync: {', '.join(command_names)}")
+            
+            synced = await self.bot.tree.sync()
             await ctx.send(f"Synced {len(synced)} commands.")
         except Exception as e:
             await ctx.send(f"Error syncing commands: {e}")
@@ -42,6 +45,10 @@ class Admin(commands.Cog):
 
         try:
             print("Clearing commands...")
+            commands_to_clear = self.bot.tree.get_commands()
+            command_names = [command.name for command in commands_to_clear]
+            await ctx.send(f"Commands to clear: {', '.join(command_names)}")
+
             guild = discord.Object(id=self.dev_guild_id)
             self.bot.tree.clear_commands(guild=guild)
             await self.bot.tree.sync(guild=guild)
@@ -73,6 +80,7 @@ class Admin(commands.Cog):
             except aiohttp.ClientError as e:
                 await ctx.send(f"An error occurred while communicating with the API: {e}")
 
+
     @commands.command(name="give_money", description="Give money to a user")
     @commands.is_owner()
     async def give_money(self, ctx, user: discord.User, amount: int):
@@ -84,7 +92,7 @@ class Admin(commands.Cog):
             return
 
         discord_id = str(user.id)
-        api_url = f"http://127.0.0.1:8000/users/give_money/"
+        api_url = "http://127.0.0.1:8000/users/give_money/"
         payload = {
             "discord_id": discord_id,
             "amount": amount
@@ -115,6 +123,36 @@ class Admin(commands.Cog):
             except aiohttp.ClientError as e:
                 await ctx.send(f"An error occurred while communicating with the API: {e}")
     
+    @commands.command(name="delete_user", description="Delete a user via the API")
+    @commands.is_owner()
+    async def delete_user(self, ctx):
+        """
+        Command to delete a user via the API.
+        """
+        discord_id = str(ctx.author.id)
+        api_url = "http://127.0.0.1:8000/users/delete_user/"
+        payload = {
+            "discord_id": discord_id
+        }
+        await ctx.send("Deleting user...")
+
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.delete(api_url, json=payload) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        message = data.get("message", "User successfully deleted.")
+                        await ctx.send(message)
+                    elif response.status == 404:
+                        error = await response.json()
+                        await ctx.send(f"Error: {error.get('error', 'User not found.')}")
+                    elif response.status == 400:
+                        error = await response.json()
+                        await ctx.send(f"Error: {error.get('error', 'Invalid request.')}")
+                    else:
+                        await ctx.send("An unexpected error occurred. Please try again later.")
+            except aiohttp.ClientError as e:
+                await ctx.send(f"An error occurred while communicating with the API: {e}")
 
 
 async def setup(bot):

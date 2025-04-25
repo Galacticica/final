@@ -1,8 +1,10 @@
 from django.urls import path
-from .views import GetOrCreateUserView, CoinFlipBetView, GiveMoneyView
+from . import views
 
 urlpatterns = [
-    path('', GetOrCreateUserView.as_view(), name='get_or_create_user'),
-    path('give_money/', GiveMoneyView.as_view(), name='give_money'),
-    path('coinflip/', CoinFlipBetView.as_view(), name='coinflip_bet'),
+    path('', views.GetOrCreateUserView.as_view(), name='get_or_create_user'),
+    path('give_money/', views.GiveMoneyView.as_view(), name='give_money'),
+    path('coinflip/', views.CoinFlipBetView.as_view(), name='coinflip_bet'),
+    path('profile/', views.GetOrCreateUserView.as_view(), name='profile'),
+    path('delete_user/', views.DeleteUserView.as_view(), name='delete_user'),
 ]

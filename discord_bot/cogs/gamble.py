@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-import aiohttp  # For making asynchronous HTTP requests
+import aiohttp  
 
 class Gamble(commands.Cog):
     def __init__(self, bot):
@@ -33,11 +33,11 @@ class Gamble(commands.Cog):
 
         async with aiohttp.ClientSession() as session:
             async with session.post(api_url, json=payload) as response:
-                if response.status == 200:
+                if response.status in range(200, 300):
                     data = await response.json()
                     message = data.get("message", "Something went wrong.")
                     await interaction.response.send_message(message)
-                elif response.status == 400:
+                elif response.status in range (400, 500):
                     error = await response.json()
                     await interaction.response.send_message(f"Error: {error.get('error', 'Invalid request.')}")
                 else:

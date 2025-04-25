@@ -15,7 +15,7 @@ class CustomUser(models.Model):
 class CurrentAdventure(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     adventure = models.ForeignKey(Adventure, on_delete=models.CASCADE)
-    time_left = models.IntegerField(default=0)  # Time left in seconds
+    time_left = models.IntegerField(default=0)  
 
     def __str__(self):
         return f"{self.user.username} - {self.adventure.name}"
