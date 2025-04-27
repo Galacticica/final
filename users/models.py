@@ -23,6 +23,7 @@ class CurrentAdventure(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='current_adventure')
     adventure = models.ForeignKey(Adventure, on_delete=models.CASCADE)
     time_left = models.IntegerField(default=0)  
+    time_started = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.adventure.name}"
