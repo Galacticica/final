@@ -5,6 +5,7 @@ from .models import Adventure
 from . import serializers as cereal
 from users.models import CustomUser, CurrentAdventure
 from django.utils import timezone
+import random
 
 class GetAdventuresView(APIView):
     def get(self, request):
@@ -64,3 +65,43 @@ class AdventureStatusView(APIView):
             return Response(seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CompleteAdventureView(APIView):
+    def post(self, request):
+        discord_id = request.data.get('discord_id')
+
+        if not discord_id:
+            return Response({"error": "discord_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = cereal.AdventureCompleteSerializer(data=request.data)
+
+        if serializer.is_valid():
+            user = serializer.user
+            current_adventure = CurrentAdventure.objects.filter(user=user).first()
+
+            if not current_adventure:
+                return Response({"error": "User is not on an adventure."}, status=status.HTTP_400_BAD_REQUEST)
+
+            adventure = current_adventure.adventure
+
+            # Calculate rewards
+            xp_reward = random.randint(adventure.xp_min, adventure.xp_max)
+            money_reward = random.randint(adventure.reward_min, adventure.reward_max)
+
+            # Update user stats
+            user.xp += xp_reward
+            user.money += money_reward
+            user.save()
+
+            # Delete the current adventure
+            current_adventure.delete()
+
+            return Response({
+                "message": "Adventure completed successfully!",
+                "adventure_name": adventure.name,
+                "xp_reward": xp_reward,
+                "money_reward": money_reward,
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        

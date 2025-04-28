@@ -65,5 +65,24 @@ class AdventureStatusSerializer(serializers.Serializer):
     
         return data
             
+class AdventureCompleteSerializer(serializers.Serializer):
+    discord_id = serializers.CharField(max_length=255)
+    
+    def validate(self, data):
+        discord_id = data.get('discord_id')
+
+        self.user, created = CustomUser.objects.get_or_create(
+            discord_id=discord_id,
+            defaults={
+                "level": 1,
+                "xp": 0,
+                "money": 100,
+            }
+        )
+
+        if not CurrentAdventure.objects.filter(user=self.user).exists():
+            raise serializers.ValidationError("User is not on an adventure.")
+    
+        return data
 
 

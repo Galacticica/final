@@ -81,7 +81,50 @@ class Adventure(commands.Cog):
                 await interaction.response.send_message(f"An error occurred while communicating with the API: {e}")
                 return
 
-        
+    async def complete_adventure(self, interaction: discord.Interaction):
+        """
+        Command to complete an adventure.
+        """
+        api_url = "http://127.0.0.1:8000/adventures/complete/"
+        payload = {
+            "discord_id": str(interaction.user.id)
+        }
+
+        def format_complete_adventure(adventure):
+            adventure_name = adventure.get("adventure_name", "Unknown Adventure")
+            rewarded_xp = adventure.get("xp_reward", 0)
+            rewarded_money = adventure.get("money_reward", 0)
+
+            embed = discord.Embed(
+                title=f"{adventure_name} Completed!",
+                color=discord.Color.green()
+            )
+            embed.add_field(name="XP Gained", value=rewarded_xp, inline=True)
+            embed.add_field(name="Money Gained", value=rewarded_money, inline=True)
+            embed.set_footer(text="Congratulations on completing your adventure!")
+            return embed
+
+
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.post(api_url, json=payload) as response:
+                    if response.status in range(200, 300):
+                        data = await response.json()
+                        print(data)
+                        embed = format_complete_adventure(data)
+                        await interaction.response.send_message(embed=embed)
+                    elif response.status in range(400, 500):
+                        error = await response.json()
+                        error = error['non_field_errors']
+                        await interaction.response.send_message(f"Error: {error[0]}")
+                        return
+                    else:
+                        await interaction.response.send_message("An unexpected error occurred. Please try again later.")
+                        return
+            except aiohttp.ClientError as e:
+                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}")
+                return
+            
         
     @discord.app_commands.command(name="adventure_status", description="Check the status of your adventure")
     async def adventure_status(self, interaction: discord.Interaction):
@@ -99,7 +142,7 @@ class Adventure(commands.Cog):
 
             embed = discord.Embed(
                 title=f"{adventure_name} Status",
-                color=discord.Color.green()
+                color=discord.Color.yellow()
             )
             embed.add_field(name="Time Left", value=time_left, inline=True)
             embed.set_footer(text="Stay strong on your adventure!")
@@ -112,10 +155,12 @@ class Adventure(commands.Cog):
                     if response.status in range(200, 300):
                         data = await response.json()
                         if data.get("complete"):
-                            await interaction.response.send_message("Your adventure is complete! You can now claim your rewards.")
+                            await self.complete_adventure(interaction)
+                            return
                         else:
                             embed = format_adventure_status(data)
                             await interaction.response.send_message(embed=embed)
+                            return
                     elif response.status in range(400, 500):
                         error = await response.json()
                         error = error['non_field_errors']
