@@ -24,14 +24,33 @@ class Adventure(commands.Cog):
 
         api_url = "http://127.0.0.1:8000/adventures/list/"
 
+        def format_adventure_list(adventures):
+            '''
+            Helper function to format the adventure list response.
+            This function creates a Discord embed with the list of adventures.
+            '''
+
+            embed = discord.Embed(
+                title="Available Adventures",
+                color=discord.Color.blue()
+            )
+            for adventure in adventures:
+                adventure_name = adventure.get("name", "Unknown Adventure")
+                adventure_level = adventure.get("required_level", "Unknown Level")
+                adventure_description = adventure.get("description", "No description available.")
+                embed.add_field(name=f"Level {adventure_level}: {adventure_name}", value=adventure_description, inline=False)
+                embed.set_footer(text="Use /start_adventure <adventure_name> to start an adventure!")
+            return embed
+            
+
         async with aiohttp.ClientSession() as session: 
             try:
                 async with session.get(api_url) as response: 
                     if response.status in range(200, 300):
                         data = await response.json()
-                        adventure_names = [adventure["name"] for adventure in data]
-                        if adventure_names:
-                            await interaction.response.send_message(f"Available adventures: {', '.join(adventure_names)}")
+                        if data and isinstance(data, list) and len(data) > 0:
+                            embed = format_adventure_list(data)
+                            await interaction.response.send_message(embed=embed)
                         else:
                             await interaction.response.send_message("No adventures available at the moment.")
                     else:
