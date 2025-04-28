@@ -162,6 +162,11 @@ class Adventure(commands.Cog):
         }
 
         def format_adventure_status(adventure):
+            '''
+            Helper function to format the adventure status response.
+            This function creates a Discord embed with the adventure status information.
+            '''
+
             adventure_name = adventure.get("name", "Unknown Adventure")
             time_left = self.format_time(adventure.get("time_left", 0))
 
