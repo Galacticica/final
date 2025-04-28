@@ -6,8 +6,6 @@ Description: Gambling commands for the bot.
 This file contains commands related to gambling, including coin flipping.
 """
 
-
-
 import discord
 from discord.ext import commands
 import aiohttp  
@@ -16,18 +14,44 @@ class Gamble(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.app_commands.command(name="coinflip", description="Flip a coin and place a bet")
+    gamble_group = discord.app_commands.Group(name="gamble", description="Gambling commands")
+
+
+    @gamble_group.command(name="help", description="Shows the help menu")
+    async def help(self, interaction: discord.Interaction):
+        """
+        Command to show the help menu.
+        """
+        
+        embed = discord.Embed(
+            title="Help Menu",
+            description="List of available commands:",
+            color=discord.Color.blue()
+        )
+
+        for command in self.gamble_group.commands:
+            embed.add_field(
+            name=f"/gamble {command.name}",
+            value=command.description or "No description available.",
+            inline=False
+        )
+
+        await interaction.response.send_message(embed=embed)
+
+
+
+    @gamble_group.command(name="coinflip", description="Flip a coin and place a bet")
     async def coinflip(self, interaction: discord.Interaction, bet: int, side: str):
         """
         Flip a coin, place a bet, and check if you win or lose.
         """
 
         if side.lower() not in ["heads", "tails"]:
-            await interaction.response.send_message("Please choose either 'heads' or 'tails'.", ephemeral=True)
+            await interaction.response.send_message("Please choose either 'heads' or 'tails'.")
             return
 
         if bet <= 0:
-            await interaction.response.send_message("Your bet must be a positive integer.", ephemeral=True)
+            await interaction.response.send_message("Your bet must be a positive integer.")
             return
 
         discord_id = str(interaction.user.id)

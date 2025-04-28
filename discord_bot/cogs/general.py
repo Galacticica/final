@@ -16,8 +16,32 @@ import aiohttp
 class General(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        
+    user_group = discord.app_commands.Group(name="user", description="User commands")
 
-    @discord.app_commands.command(name="profile", description="Shows the user's current stats")
+
+    @user_group.command(name="help", description="Shows the help menu")
+    async def help(self, interaction: discord.Interaction):
+        """
+        Command to show the help menu.
+        """
+        
+        embed = discord.Embed(
+            title="Help Menu",
+            description="List of available commands:",
+            color=discord.Color.blue()
+        )
+
+        for command in self.user_group.commands:
+            embed.add_field(
+            name=f"/user {command.name}",
+            value=command.description or "No description available.",
+            inline=False
+        )
+
+        await interaction.response.send_message(embed=embed)
+
+    @user_group.command(name="profile", description="Shows the user's current stats")
     async def profile(self, interaction: discord.Interaction):
         """
         Command to show the user's profile.
@@ -65,7 +89,7 @@ class General(commands.Cog):
                 await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
                 return
             
-    @discord.app_commands.command(name="level_up", description="Level up your user")
+    @user_group.command(name="level_up", description="Level up your user")
     async def level_up(self, interaction: discord.Interaction):
         """
         Command to level up the user.

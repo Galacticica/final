@@ -25,9 +25,8 @@ class Help(commands.Cog):
             color=discord.Color.blue()
         )
 
-        # Add commands to the embed
         for command in self.bot.tree.get_commands():
-            embed.add_field(name=f"/{command.name}", value=command.description, inline=False)
+            embed.add_field(name=f"/{command.name} help", value=f"Shows help for {command.name} commands", inline=False)
 
         await interaction.response.send_message(embed=embed)
 

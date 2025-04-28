@@ -6,6 +6,8 @@ class Adventure(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    adventure_group = discord.app_commands.Group(name="adventure", description="Adventure commands")
+
     def format_time(self, seconds):
         '''
         Helper function to format time in seconds to a readable format.
@@ -13,9 +15,31 @@ class Adventure(commands.Cog):
             
         minutes, seconds = divmod(seconds, 60)
         hours, minutes = divmod(minutes, 60)
-        return f"{int(hours)}h {int(minutes)}m {int(seconds)}s"  
+        return f"{int(hours)}h {int(minutes)}m {int(seconds)}s" 
 
-    @discord.app_commands.command(name="list_adventures", description="List all available adventures")
+
+    @adventure_group.command(name="help", description="Shows the help menu")
+    async def help(self, interaction: discord.Interaction):
+        """
+        Command to show the help menu.
+        """
+        
+        embed = discord.Embed(
+            title="Help Menu",
+            description="List of available commands:",
+            color=discord.Color.blue()
+        )
+
+        for command in self.adventure_group.commands:
+            embed.add_field(
+            name=f"/adventure {command.name}",
+            value=command.description or "No description available.",
+            inline=False
+        )
+
+        await interaction.response.send_message(embed=embed) 
+
+    @adventure_group.command(name="list", description="List all available adventures")
     async def list_adventures(self, interaction: discord.Interaction):
         """
         Command to list all available adventures.
@@ -59,7 +83,7 @@ class Adventure(commands.Cog):
                 await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
                 return
             
-    @discord.app_commands.command(name="start_adventure", description="Start an adventure")
+    @adventure_group.command(name="start", description="Start an adventure")
     async def start_adventure(self, interaction: discord.Interaction, adventure_name: str):
         """
         Command to start an adventure.
@@ -165,7 +189,7 @@ class Adventure(commands.Cog):
                 return
             
         
-    @discord.app_commands.command(name="adventure_status", description="Check the status of your adventure")
+    @adventure_group.command(name="status", description="Check the status of your adventure")
     async def adventure_status(self, interaction: discord.Interaction):
         """
         Command to check the status of an adventure.
