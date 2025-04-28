@@ -19,7 +19,28 @@ class AdventureSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Adventure
-        fields = ['idle', 'required_level', 'time_to_complete', 'name', 'description', 'reward_min', 'reward_max', 'xp_min', 'xp_max']        
+        fields = ['idle', 'required_level', 'time_to_complete', 'name', 'description', 'reward_min', 'reward_max', 'xp_min', 'xp_max']  
+
+class AdventureDetailSerializer(serializers.Serializer):
+    '''
+    Serializer for getting details of a specific adventure.
+    This serializer is used to validate the adventure name and get the adventure object.
+    '''
+
+    adventure_name = serializers.CharField(max_length=255)
+
+    def validate(self, data):
+        adventure_name = data.get('adventure_name').title()
+
+        try:
+            adventure = Adventure.objects.get(name=adventure_name)
+        except Adventure.DoesNotExist:
+            raise serializers.ValidationError("Adventure does not exist.")
+        
+        data['adventure'] = adventure
+        return data
+
+
     
 class AdventureStartSerializer(serializers.Serializer):
     '''

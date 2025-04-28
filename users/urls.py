@@ -13,6 +13,7 @@ from . import views
 urlpatterns = [
     path('', views.GetOrCreateUserView.as_view(), name='get_or_create_user'),
     path('give_money/', views.GiveMoneyView.as_view(), name='give_money'),
+    path('give_xp/', views.GiveXPView.as_view(), name='give_xp'),
     path('coinflip/', views.CoinFlipBetView.as_view(), name='coinflip_bet'),
     path('profile/', views.GetOrCreateUserView.as_view(), name='profile'),
     path('delete_user/', views.DeleteUserView.as_view(), name='delete_user'),

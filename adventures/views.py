@@ -29,6 +29,27 @@ class GetAdventuresView(APIView):
         serialized_adventures = serializer(adventures, many=True)
         return Response(serialized_adventures.data, status=status.HTTP_200_OK)
     
+class GetSpecificAdventureView(APIView):
+    '''
+    View to get a specific adventure by name.
+    This view requires an adventure_name in the request data.
+    '''
+
+    def get(self, request):
+        adventure_name = request.data.get('adventure_name').title()
+        if not adventure_name:
+            return Response({"error": "adventure_name is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = cereal.AdventureDetailSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            json_serializer = cereal.AdventureSerializer
+            adventure = serializer.validated_data['adventure']
+            serialized_adventure = json_serializer(adventure)
+            return Response(serialized_adventure.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 class StartAdventureView(APIView):
     '''
     View to start an adventure.

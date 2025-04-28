@@ -54,6 +54,8 @@ class Adventure(commands.Cog):
             This function creates a Discord embed with the list of adventures.
             '''
 
+            adventures.sort(key=lambda x: x.get("required_level", 0))
+
             embed = discord.Embed(
                 title="Available Adventures",
                 color=discord.Color.blue()
@@ -61,9 +63,9 @@ class Adventure(commands.Cog):
             for adventure in adventures:
                 adventure_name = adventure.get("name", "Unknown Adventure")
                 adventure_level = adventure.get("required_level", "Unknown Level")
-                adventure_description = adventure.get("description", "No description available.")
-                embed.add_field(name=f"Level {adventure_level}: {adventure_name}", value=adventure_description, inline=False)
-                embed.set_footer(text="Use /start_adventure <adventure_name> to start an adventure!")
+                adventure_time = self.format_time(adventure.get("time_to_complete", 0))
+                embed.add_field(name=f"Level {adventure_level}: {adventure_name}", value=f"Time To Complete: {adventure_time}", inline=False)
+                embed.set_footer(text="Use /adventure info <adventure_name> to get more info on an adventure!")
             return embed
             
 
@@ -83,6 +85,69 @@ class Adventure(commands.Cog):
                 await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
                 return
             
+    @adventure_group.command(name="info", description="Get information about a specific adventure")
+    async def adventure_info(self, interaction: discord.Interaction, adventure_name: str):
+        """
+        Command to get information about a specific adventure.
+        This command fetches the adventure details from the API and displays them to the user.
+        """
+
+        api_url = "http://127.0.0.1:8000/adventures/detail/"
+        payload = {
+            "adventure_name": adventure_name
+        }
+        
+        def format_adventure_info(adventure):
+            '''
+            Helper function to format the adventure info response.
+            This function creates a Discord embed with the adventure details.
+            '''
+
+            adventure_name = adventure.get("name", "Unknown Adventure")
+            adventure_description = adventure.get("description", "No description available.")
+            required_level = adventure.get("required_level", "Unknown Level")
+            time_to_complete = self.format_time(adventure.get("time_to_complete", 0))
+            reward_min = adventure.get("reward_min", 0)
+            reward_max = adventure.get("reward_max", 0)
+            xp_min = adventure.get("xp_min", 0)
+            xp_max = adventure.get("xp_max", 0)
+
+            embed = discord.Embed(
+                title=adventure_name,
+                description=adventure_description,
+                color=discord.Color.blue()
+            )
+            embed.add_field(name="Required Level", value=required_level, inline=True)
+            embed.add_field(name="Time to Complete", value=time_to_complete, inline=True)
+            embed.add_field(name="Reward Range", value=f"{reward_min} - {reward_max}", inline=True)
+            embed.add_field(name="XP Range", value=f"{xp_min} - {xp_max}", inline=True)
+            embed.set_footer(text="Use /adventure start <adventure_name> to start this adventure!")
+
+            return embed
+            
+
+        async with aiohttp.ClientSession() as session:
+            print("Connecting to API...")
+            try:
+                async with session.get(api_url, json=payload) as response:
+                    print(f"Response status: {response.status}")
+                    if response.status in range(200, 300):
+                        data = await response.json()
+                        embed = format_adventure_info(data)
+                        await interaction.response.send_message(embed=embed)
+                    elif response.status in range(400, 500):
+                        error = await response.json()
+                        error = error['non_field_errors']
+                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        return
+                    else:
+                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
+                        return
+            except aiohttp.ClientError as e:
+                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
+                return
+
+
     @adventure_group.command(name="start", description="Start an adventure")
     async def start_adventure(self, interaction: discord.Interaction, adventure_name: str):
         """
