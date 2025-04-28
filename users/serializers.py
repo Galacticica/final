@@ -17,9 +17,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
     This serializer is used to serialize user data for the profile endpoint.
     '''
 
+    xp_needed = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = CustomUser
-        fields = ['discord_id', 'username', 'level', 'xp', 'money']
+        fields = ['discord_id', 'username', 'level', 'xp', 'money', 'xp_needed']
 
 class CoinFlipBetSerializer(serializers.Serializer):
     '''
@@ -35,10 +37,11 @@ class CoinFlipBetSerializer(serializers.Serializer):
     side = serializers.ChoiceField(choices=['heads', 'tails'])
 
     def validate(self, data):
+        discord_id = data.get('discord_id')
+
         self.user, created = CustomUser.objects.get_or_create(
-            discord_id=data['discord_id'],
+            discord_id=discord_id,
             defaults={
-                "username": data['username'],
                 "level": 1,
                 "xp": 0,
                 "money": 100,
@@ -50,3 +53,28 @@ class CoinFlipBetSerializer(serializers.Serializer):
         return data
 
 
+class LevelUpSerializer(serializers.Serializer):
+    '''
+    Serializer for the LevelUp model.
+    This serializer is used to validate the data for leveling up a user.
+    It checks if the user has enough XP to level up and updates the user's level and XP accordingly.
+    '''
+
+    discord_id = serializers.CharField(max_length=255)
+    
+    def validate(self, data):
+        discord_id = data.get('discord_id')
+
+        self.user, created = CustomUser.objects.get_or_create(
+            discord_id=discord_id,
+            defaults={
+                "level": 1,
+                "xp": 0,
+                "money": 100,
+            }
+        )
+
+        if self.user.xp < self.user.xp_needed:
+            raise serializers.ValidationError(f"Not enough XP to level up. Need {self.user.xp_needed - self.user.xp} more XP.")
+        
+        return data

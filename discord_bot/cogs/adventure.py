@@ -131,7 +131,6 @@ class Adventure(commands.Cog):
                 async with session.post(api_url, json=payload) as response:
                     if response.status in range(200, 300):
                         data = await response.json()
-                        print(data)
                         embed = format_complete_adventure(data)
                         await interaction.response.send_message(embed=embed)
                     elif response.status in range(400, 500):

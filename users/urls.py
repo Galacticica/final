@@ -16,4 +16,5 @@ urlpatterns = [
     path('coinflip/', views.CoinFlipBetView.as_view(), name='coinflip_bet'),
     path('profile/', views.GetOrCreateUserView.as_view(), name='profile'),
     path('delete_user/', views.DeleteUserView.as_view(), name='delete_user'),
+    path('level_up/', views.LevelUpView.as_view(), name='level_up'),
 ]

@@ -10,6 +10,8 @@ Description: Registers Adventure model with Django admin.
 from django.contrib import admin
 from .models import Adventure
 
+class AdventureAdmin(admin.ModelAdmin):
+    list_display = ('name', 'required_level')
 
 # Register your models here.
-admin.site.register(Adventure)
+admin.site.register(Adventure, AdventureAdmin)
