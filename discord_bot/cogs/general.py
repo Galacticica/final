@@ -59,16 +59,19 @@ class General(commands.Cog):
                         data = await response.json()
                         await display_profile(interaction, data)
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.")
+                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}")
+                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
                 return
             
     @discord.app_commands.command(name="level_up", description="Level up your user")
     async def level_up(self, interaction: discord.Interaction):
         """
         Command to level up the user.
+        This command simulates leveling up the user and displays the new level and XP.
+        It sends a request to the API to update the user's level and XP.
+        The API is expected to return the new level and XP needed for the next level.
         """
 
         discord_id = str(interaction.user.id)
@@ -81,6 +84,7 @@ class General(commands.Cog):
         async def format_level_up(data):
             """
             Helper function to format the level up response.
+            This function creates an embed message to display the new level and XP.
             """
 
             new_level = data.get("level", 1)
@@ -107,13 +111,13 @@ class General(commands.Cog):
                     elif response.status in range(400, 500):
                         error = await response.json()
                         error = error.get('error', {}).get('non_field_errors', ["An unknown error occurred."])[0]
-                        await interaction.response.send_message(f"Error: {error}")
+                        await interaction.response.send_message(f"Error: {error}", ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.")
+                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}")
+                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
                 return
 
 async def setup(bot):

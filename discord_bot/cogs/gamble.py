@@ -23,11 +23,11 @@ class Gamble(commands.Cog):
         """
 
         if side.lower() not in ["heads", "tails"]:
-            await interaction.response.send_message("Please choose either 'heads' or 'tails'.")
+            await interaction.response.send_message("Please choose either 'heads' or 'tails'.", ephemeral=True)
             return
 
         if bet <= 0:
-            await interaction.response.send_message("Your bet must be a positive integer.")
+            await interaction.response.send_message("Your bet must be a positive integer.", ephemeral=True)
             return
 
         discord_id = str(interaction.user.id)
@@ -47,13 +47,13 @@ class Gamble(commands.Cog):
                 if response.status in range(200, 300):
                     data = await response.json()
                     message = data.get("message", "Something went wrong.")
-                    await interaction.response.send_message(message)
+                    await interaction.response.send_message(message, ephemeral=True)
                 elif response.status in range (400, 500):
                     error = await response.json()
                     
-                    await interaction.response.send_message(f"Error: {error.get('error', 'Invalid request.')}")
+                    await interaction.response.send_message(f"Error: {error.get('error', 'Invalid request.')}", ephemeral=True)
                 else:
-                    await interaction.response.send_message("An unexpected error occurred. Please try again later.")
+                    await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
 
 async def setup(bot):
     '''

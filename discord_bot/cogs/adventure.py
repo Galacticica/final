@@ -54,9 +54,9 @@ class Adventure(commands.Cog):
                         else:
                             await interaction.response.send_message("No adventures available at the moment.")
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.")
+                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}")
+                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
                 return
             
     @discord.app_commands.command(name="start_adventure", description="Start an adventure")
@@ -104,13 +104,13 @@ class Adventure(commands.Cog):
                     elif response.status in range(400, 500):
                         error = await response.json()
                         error = error['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}")
+                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.")
+                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}")
+                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
                 return
 
     async def complete_adventure(self, interaction: discord.Interaction):
@@ -155,13 +155,13 @@ class Adventure(commands.Cog):
                     elif response.status in range(400, 500):
                         error = await response.json()
                         error = error['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}")
+                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.")
+                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}")
+                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
                 return
             
         
@@ -212,13 +212,13 @@ class Adventure(commands.Cog):
                     elif response.status in range(400, 500):
                         error = await response.json()
                         error = error['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}")
+                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.")
+                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}")
+                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
                 return
 
 
