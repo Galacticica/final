@@ -127,7 +127,7 @@ class Admin(commands.Cog):
     @commands.is_owner()
     async def give_xp(self, ctx, user: discord.User, amount: int):
         """
-        Give money to a user.
+        Give xp to a user.
         """
 
         if amount <= 0:

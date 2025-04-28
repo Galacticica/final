@@ -18,6 +18,12 @@ import random
 
 
 class GetOrCreateUserView(APIView):
+    '''
+    View to get or create a user.
+    This view requires a discord_id in the request data.
+    Admin command
+    '''
+
     def post(self, request):
         discord_id = request.data.get('discord_id')
         username = request.data.get('username')
@@ -42,6 +48,12 @@ class GetOrCreateUserView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
 
 class GiveMoneyView(APIView):
+    '''
+    View to give money to a user.
+    This view requires a discord_id and amount in the request data.
+    Admin command
+    '''
+
     def post(self, request):
         discord_id = request.data.get('discord_id')
         amount = request.data.get('amount')
@@ -66,6 +78,12 @@ class GiveMoneyView(APIView):
         return Response({"message": f"Successfully added {amount} money to {user.username}'s account.", "balance": user.money}, status=status.HTTP_200_OK)
     
 class GiveXPView(APIView):
+    '''
+    View to give XP to a user.
+    This view requires a discord_id and amount in the request data.
+    Admin command
+    '''
+
     def post(self, request):
         discord_id = request.data.get('discord_id')
         amount = request.data.get('amount')
@@ -89,7 +107,33 @@ class GiveXPView(APIView):
 
         return Response({"message": f"Successfully added {amount} xp to {user.username}'s account.", "xp": user.xp}, status=status.HTTP_200_OK)
 
+class DeleteUserView(APIView):
+    '''
+    View to delete a user.
+    This view requires a discord_id in the request data.
+    Admin command
+    '''
+
+    def delete(self, request):
+        discord_id = request.data.get('discord_id')
+
+        if not discord_id:
+            return Response({"error": "discord_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = CustomUser.objects.filter(discord_id=discord_id).first()
+        if not user:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        user.delete()
+        return Response({"message": "User successfully deleted."}, status=status.HTTP_200_OK)
+
 class CoinFlipBetView(APIView):
+    '''
+    View to place a bet on a coin flip.
+    This view requires a discord_id, bet amount, and side (heads or tails) in the request data.
+    It checks if the user has enough money to place the bet and updates their balance accordingly.
+    '''
+
     def post(self, request):
         discord_id = request.data.get('discord_id')
 
@@ -116,21 +160,13 @@ class CoinFlipBetView(APIView):
         else:
             return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-class DeleteUserView(APIView):
-    def delete(self, request):
-        discord_id = request.data.get('discord_id')
-
-        if not discord_id:
-            return Response({"error": "discord_id is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-        user = CustomUser.objects.filter(discord_id=discord_id).first()
-        if not user:
-            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        user.delete()
-        return Response({"message": "User successfully deleted."}, status=status.HTTP_200_OK)
-
 class LevelUpView(APIView):
+    '''
+    View to level up a user.
+    This view requires a discord_id in the request data.
+    It checks if the user has enough XP to level up and updates their level and XP accordingly.
+    '''
+
     def post(self, request):
         discord_id = request.data.get('discord_id')
 
