@@ -83,7 +83,50 @@ class Adventure(commands.Cog):
 
         
         
+    @discord.app_commands.command(name="adventure_status", description="Check the status of your adventure")
+    async def adventure_status(self, interaction: discord.Interaction):
+        """
+        Command to check the status of an adventure.
+        """
+        api_url = "http://127.0.0.1:8000/adventures/status/"
+        payload = {
+            "discord_id": str(interaction.user.id)
+        }
+
+        def format_adventure_status(adventure):
+            adventure_name = adventure.get("name", "Unknown Adventure")
+            time_left = self.format_time(adventure.get("time_left", 0))
+
+            embed = discord.Embed(
+                title=f"{adventure_name} Status",
+                color=discord.Color.green()
+            )
+            embed.add_field(name="Time Left", value=time_left, inline=True)
+            embed.set_footer(text="Stay strong on your adventure!")
+
+            return embed        
         
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.post(api_url, json=payload) as response:
+                    if response.status in range(200, 300):
+                        data = await response.json()
+                        if data.get("complete"):
+                            await interaction.response.send_message("Your adventure is complete! You can now claim your rewards.")
+                        else:
+                            embed = format_adventure_status(data)
+                            await interaction.response.send_message(embed=embed)
+                    elif response.status in range(400, 500):
+                        error = await response.json()
+                        error = error['non_field_errors']
+                        await interaction.response.send_message(f"Error: {error[0]}")
+                        return
+                    else:
+                        await interaction.response.send_message("An unexpected error occurred. Please try again later.")
+                        return
+            except aiohttp.ClientError as e:
+                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}")
+                return
 
     
 
