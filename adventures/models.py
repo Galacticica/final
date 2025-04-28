@@ -9,6 +9,11 @@ This model represents an adventure that can be completed by a user.
 from django.db import models
 
 class Adventure(models.Model):
+    '''
+    Model representing an adventure that can be completed by a user.
+    Each adventure has a name, description, required level, time to complete,
+    '''
+    
     idle = models.BooleanField(default=True)
     required_level = models.IntegerField(default=1)
     time_to_complete = models.IntegerField(default=1)

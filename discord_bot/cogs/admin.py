@@ -3,6 +3,7 @@ File: admin.py
 Author: Reagan Zierke
 Date: 2025-04-22
 Description: Developer commands for the bot.
+These commands are intended for development and will not be in future deployment. 
 """
 
 
@@ -12,9 +13,6 @@ import discord
 
 class Admin(commands.Cog):
     def __init__(self, bot, dev_guild_id=756190406642761869):
-        '''
-        Initializes the Admin cog.
-        '''
         self.dev_guild_id = dev_guild_id
         self.bot = bot
 
@@ -62,6 +60,7 @@ class Admin(commands.Cog):
         """
         Command to interact with the API and either get or create a user.
         """
+
         discord_id = ctx.author.id  
         discord_username = ctx.author.name  
         api_url = "http://127.0.0.1:8000/users/" 
@@ -87,6 +86,7 @@ class Admin(commands.Cog):
         """
         Give money to a user.
         """
+
         if amount <= 0:
             await ctx.send("Amount must be a positive integer.")
             return
@@ -129,6 +129,7 @@ class Admin(commands.Cog):
         """
         Command to delete a user via the API.
         """
+
         discord_id = str(ctx.author.id)
         api_url = "http://127.0.0.1:8000/users/delete_user/"
         payload = {
@@ -156,4 +157,8 @@ class Admin(commands.Cog):
 
 
 async def setup(bot):
+    '''
+    Load the Admin cog.
+    '''
+
     await bot.add_cog(Admin(bot))

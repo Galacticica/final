@@ -1,3 +1,13 @@
+"""
+File: gamble.py
+Author: Reagan Zierke
+Date: 2025-04-27
+Description: Gambling commands for the bot.
+This file contains commands related to gambling, including coin flipping.
+"""
+
+
+
 import discord
 from discord.ext import commands
 import aiohttp  
@@ -11,6 +21,7 @@ class Gamble(commands.Cog):
         """
         Flip a coin, place a bet, and check if you win or lose.
         """
+
         if side.lower() not in ["heads", "tails"]:
             await interaction.response.send_message("Please choose either 'heads' or 'tails'.")
             return
@@ -45,4 +56,8 @@ class Gamble(commands.Cog):
                     await interaction.response.send_message("An unexpected error occurred. Please try again later.")
 
 async def setup(bot):
+    '''
+    Load the Gamble cog.
+    '''
+
     await bot.add_cog(Gamble(bot))

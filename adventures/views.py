@@ -1,13 +1,28 @@
+"""
+File: views.py
+Author: Reagan Zierke
+Date: 2025-04-27
+Description: API views for the Adventure app.
+This file contains views for getting a list of adventures, starting an adventure,
+checking the status of an adventure, and completing an adventure.
+"""
+
+
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Adventure
 from . import serializers as cereal
-from users.models import CustomUser, CurrentAdventure
+from users.models import CurrentAdventure
 from django.utils import timezone
 import random
 
 class GetAdventuresView(APIView):
+    '''
+    View to get a list of all adventures.
+    '''
+
     def get(self, request):
         serializer = cereal.AdventureSerializer
         adventures = Adventure.objects.all()
@@ -15,6 +30,12 @@ class GetAdventuresView(APIView):
         return Response(serialized_adventures.data, status=status.HTTP_200_OK)
     
 class StartAdventureView(APIView):
+    '''
+    View to start an adventure.
+    This view requires a discord_id and adventure_name in the request data.
+    It creates a new CurrentAdventure object for the user and returns its details.
+    '''
+
     def post(self, request):
         discord_id = request.data.get('discord_id')
         adventure_name = request.data.get('adventure_name').title()
@@ -30,11 +51,20 @@ class StartAdventureView(APIView):
             adventure = Adventure.objects.get(name=adventure_name)
             current_adventure = CurrentAdventure.objects.create(user=user, adventure=adventure, time_left=adventure.time_to_complete)
             current_adventure_serializer = cereal.CurrentAdventureSerializer(current_adventure)
+
             return Response(current_adventure_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 class AdventureStatusView(APIView):
+    '''
+    View to check the status of an adventure.
+    This view requires a discord_id in the request data.
+    It updates the time left for the adventure and returns its details.
+    If the adventure is complete, it returns a message indicating completion.
+    If the adventure is not complete, it returns the current status of the adventure.
+    '''
+
     def post(self, request):
         discord_id = request.data.get('discord_id')
 
@@ -66,6 +96,13 @@ class AdventureStatusView(APIView):
 
 
 class CompleteAdventureView(APIView):
+    '''
+    View to complete an adventure.
+    This view requires a discord_id in the request data.
+    It calculates the rewards for completing the adventure and updates the user's stats.
+    It deletes the current adventure and returns the rewards.
+    '''
+
     def post(self, request):
         discord_id = request.data.get('discord_id')
 
@@ -83,16 +120,13 @@ class CompleteAdventureView(APIView):
 
             adventure = current_adventure.adventure
 
-            # Calculate rewards
             xp_reward = random.randint(adventure.xp_min, adventure.xp_max)
             money_reward = random.randint(adventure.reward_min, adventure.reward_max)
 
-            # Update user stats
             user.xp += xp_reward
             user.money += money_reward
             user.save()
 
-            # Delete the current adventure
             current_adventure.delete()
 
             return Response({

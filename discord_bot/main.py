@@ -2,7 +2,8 @@
 File: main.py
 Author: Reagan Zierke
 Date: 2025-04-22
-Description: Discord bot main file.
+Description: Main file for the Discord bot.
+This file initializes the bot, loads cogs, and starts the bot.
 """
 
 
@@ -21,6 +22,10 @@ dev_guild = discord.Object(id=756190406642761869)
 
 @bot.event
 async def on_ready():
+    '''
+    Event triggered when the bot is ready.
+    '''
+
     print("Setting bot presence...")
     await bot.change_presence(
         status=discord.Status.online,
@@ -29,6 +34,10 @@ async def on_ready():
     print('Bot is online!')
 
 async def load_cogs():
+    '''
+    Loads all cogs from the cogs directory.
+    '''
+
     print("Checking cogs directory...")
     print(pathlib.Path.cwd())
     if not os.path.exists("discord_bot/cogs"):
@@ -50,6 +59,10 @@ if not token:
     raise ValueError("Discord token not found in .env file!")
 
 async def main():
+    '''
+    Runs the main function to start the bot.
+    '''
+
     async with bot:
         await load_cogs()
         await bot.start(token)

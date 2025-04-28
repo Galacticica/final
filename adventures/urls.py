@@ -1,3 +1,12 @@
+"""
+File: urls.py
+Author: Reagan Zierke
+Date: 2025-04-27
+Description: URL configuration for the Adventure app.
+"""
+
+
+
 from django.urls import path
 from . import views
 

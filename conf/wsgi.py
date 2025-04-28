@@ -1,11 +1,12 @@
 """
-WSGI config for conf project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.2/howto/deployment/wsgi/
+File: wsgi.py
+Author: Reagan Zierke
+Date: 2025-04-27
+Description: WSGI configuration for the Django project.
+This file contains the WSGI application used by Django's development server and any WSGI-compatible web server.
 """
+
+
 
 import os
 

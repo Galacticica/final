@@ -1,3 +1,14 @@
+"""
+File: views.py
+Author: Reagan Zierke
+Date: 2025-04-27
+Description: Views for the Users app.
+This file contains the views for user-related operations such as getting or creating a user,
+giving money, coin flip betting, and deleting a user.
+"""
+
+
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -15,13 +26,17 @@ class GetOrCreateUserView(APIView):
 
         user, created = CustomUser.objects.get_or_create(
             discord_id= discord_id,
-            username = username,
             defaults={
+                "username": username,
                 "level": 1,
                 "xp": 0,
                 "money": 100,
             }
         )
+
+        if not created and user.username != username:
+            user.username = username
+            user.save()
 
         serializer = cereal.CustomUserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)

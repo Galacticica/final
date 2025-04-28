@@ -1,11 +1,12 @@
 """
-ASGI config for conf project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.2/howto/deployment/asgi/
+File: asgi.py
+Author: Reagan Zierke
+Date: 2025-04-27
+Description: ASGI configuration for the Django project.
+This file contains the ASGI application used by Django's development server and any ASGI-compatible web server.
 """
+
+
 
 import os
 

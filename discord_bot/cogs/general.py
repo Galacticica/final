@@ -1,3 +1,13 @@
+"""
+File: general.py
+Author: Reagan Zierke
+Date: 2025-04-27
+Description: General commands for the bot.
+This file contains general commands for the bot, including user profile display.
+"""
+
+
+
 import discord
 from discord.ext import commands
 import aiohttp
@@ -12,6 +22,7 @@ class General(commands.Cog):
         """
         Command to show the user's profile.
         """
+
         discord_id = str(interaction.user.id)
         username = interaction.user.name  
         api_url = "http://127.0.0.1:8000/users/profile/"  
@@ -21,9 +32,31 @@ class General(commands.Cog):
             "username": username
         }
 
+        async def display_profile(interaction, data):
+            """
+            Helper function to display the user's profile.
+            """
+
+            username = data.get("username", "Unknown")
+            level = data.get("level", 0)
+            xp = data.get("xp", 0)
+            money = data.get("money", 0)
+
+            embed = discord.Embed(
+                title=f"{username}'s Profile",
+                color=discord.Color.purple()
+            )
+            embed.add_field(name="Level", value=level, inline=True)
+            embed.add_field(name="XP", value=xp, inline=True)
+            embed.add_field(name="Money", value=money, inline=True)
+
+            await interaction.response.send_message(embed=embed)
+
         async with aiohttp.ClientSession() as session:
+            print(f"Sending request to {api_url} with payload: {payload}")
             try:
                 async with session.post(api_url, json=payload) as response: 
+                    print(f"Received response with status code: {response.status}")
                     if response.status in range(200, 300):
                         data = await response.json()
                         await display_profile(interaction, data)
@@ -34,33 +67,9 @@ class General(commands.Cog):
                 await interaction.response.send_message(f"An error occurred while communicating with the API: {e}")
                 return
 
-
-
-async def display_profile(interaction, data):
-        """
-        Helper function to display the user's profile.
-        """
-        username = data.get("username", "Unknown")
-        level = data.get("level", 0)
-        xp = data.get("xp", 0)
-        money = data.get("money", 0)
-
-        embed = discord.Embed(
-            title=f"{username}'s Profile",
-            color=discord.Color.blue()
-        )
-        embed.add_field(name="Level", value=level, inline=True)
-        embed.add_field(name="XP", value=xp, inline=True)
-        embed.add_field(name="Money", value=money, inline=True)
-
-        await interaction.response.send_message(embed=embed)
-        
-
 async def setup(bot):
+    '''
+    Loads the General cog.
+    '''
+    
     await bot.add_cog(General(bot))
-
-
-    '''
-    idea: have an event that on user join, it checks if the user exists in the database, if not, create a new user with default values
-    admin command to create accounts for existing users
-    '''
