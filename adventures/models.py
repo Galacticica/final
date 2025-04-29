@@ -25,9 +25,18 @@ class Adventure(models.Model):
     xp_max = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
+        '''
+        Saves reward and xp values based on the required level.
+        '''
+
         xp = int(30 * (1.2 ** (self.required_level - 0.5)))
-        self.xp_min = int(xp * 0.3)
-        self.xp_max = int(xp * 0.5)
+        self.xp_min = int(xp * 0.4)
+        self.xp_max = int(xp * 0.55)
+
+        money = 40 + ((self.required_level - 1) * 15)
+        self.reward_min = int(money * 0.75)
+        self.reward_max = int(money * 1.25)
+
         super().save(*args, **kwargs)
 
     def __str__(self):
