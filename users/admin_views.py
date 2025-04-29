@@ -1,9 +1,9 @@
 """
-File: views.py
+File: admin_views.py
 Author: Reagan Zierke
 Date: 2025-04-27
-Description: Views for the Users app.
-This file contains the views for non-admin user-related operations such as giving money, coin flip betting, etc.
+Description: Admin views for the Users app.
+This file contains views for admin-related operations such as giving money, giving XP, and deleting users.
 """
 
 
@@ -12,39 +12,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import CustomUser
-from . import serializers as cereal
-import random
 
-
-class GetOrCreateUserView(APIView):
-    '''
-    View to get or create a user.
-    This view requires a discord_id in the request data.
-    Admin command
-    '''
-
-    def post(self, request):
-        discord_id = request.data.get('discord_id')
-        username = request.data.get('username')
-        if not discord_id:
-            return Response({"error": "discord_id is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-        user, created = CustomUser.objects.get_or_create(
-            discord_id= discord_id,
-            defaults={
-                "username": username,
-                "level": 1,
-                "xp": 0,
-                "money": 100,
-            }
-        )
-
-        if not created and user.username != username:
-            user.username = username
-            user.save()
-
-        serializer = cereal.CustomUserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
     
 class GiveMoneyView(APIView):
     '''

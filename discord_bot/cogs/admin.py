@@ -54,31 +54,6 @@ class Admin(commands.Cog):
         except Exception as e:
             await ctx.send(f"Error clearing commands: {e}")
 
-    
-    @commands.command(name="get_or_create_user", description="Get or create a user via the API")
-    async def get_or_create_user(self, ctx):
-        """
-        Command to interact with the API and either get or create a user.
-        """
-
-        discord_id = ctx.author.id  
-        discord_username = ctx.author.name  
-        api_url = "http://127.0.0.1:8000/users/" 
-
-        async with aiohttp.ClientSession() as session:
-            try:
-                async with session.post(api_url, json={"discord_id": discord_id, "username": discord_username}) as response:
-                    if response.status in (200, 201): 
-                        data = await response.json()
-                        await ctx.send(
-                            f"User data: Username: {data['username']}, Level: {data['level']}, XP: {data['xp']}, Money: {data['money']}"
-                        )
-                    else:
-                        error_message = await response.text()
-                        await ctx.send(f"Failed to get or create user: {error_message}")
-            except aiohttp.ClientError as e:
-                await ctx.send(f"An error occurred while communicating with the API: {e}")
-
 
     @commands.command(name="give_money", description="Give money to a user")
     @commands.is_owner()
