@@ -75,8 +75,10 @@ class Gamble(commands.Cog):
                     await interaction.response.send_message(message)
                 elif response.status in range (400, 500):
                     error = await response.json()
-                    error = error['non_field_errors']
-                    await interaction.response.send_message(f"{error[0]}", ephemeral=True)
+                    print(error)
+                    error = error['error']['non_field_errors']
+                    print(error)
+                    await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
                     return
                 else:
                     await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
