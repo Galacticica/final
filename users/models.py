@@ -25,8 +25,8 @@ class CustomUser(models.Model):
     discord_id = models.CharField(max_length=255, unique=True)
     username = models.CharField(max_length=255, blank=True, null=True)
     level = models.IntegerField(default=1)
-    xp = models.IntegerField(default=0)
-    money = models.IntegerField(default=100)
+    xp = models.BigIntegerField(default=0)
+    money = models.BigIntegerField(default=100)
 
     @property
     def xp_needed(self):

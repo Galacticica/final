@@ -16,13 +16,13 @@ class Adventure(models.Model):
     
     idle = models.BooleanField(default=True)
     required_level = models.IntegerField(default=1)
-    time_to_complete = models.IntegerField(default=1)
+    time_to_complete = models.BigIntegerField(default=1)
     name = models.CharField(max_length=255)
     description = models.TextField()
-    reward_min = models.IntegerField(default=0)
-    reward_max = models.IntegerField(default=0)
-    xp_min = models.IntegerField(default=0)
-    xp_max = models.IntegerField(default=0)
+    reward_min = models.BigIntegerField(default=0)
+    reward_max = models.BigIntegerField(default=0)
+    xp_min = models.BigIntegerField(default=0)
+    xp_max = models.BigIntegerField(default=0)
 
     def save(self, *args, **kwargs):
         '''
