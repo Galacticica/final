@@ -110,9 +110,6 @@ class Gamble(commands.Cog):
     async def slots(self, interaction: discord.Interaction, bet: int):
         """
         Play a slot machine game.
-        The user can place a bet and the result will be displayed.
-        The slot machine uses a weighted random choice for the third slot to increase the chances of winning.
-        The winning combinations are defined in the API.
         """
 
         if bet <= 0:
@@ -132,7 +129,6 @@ class Gamble(commands.Cog):
         async def spin_slots(interaction, emojis, data):
             '''
             Helper function to create an embed for the slot machine result.
-            This function will handle the animation of the slot machine and display the result.
             '''
 
             import asyncio
@@ -147,42 +143,26 @@ class Gamble(commands.Cog):
 
             await asyncio.sleep(2)
             embed.set_footer(text="Spinning...")
+            
             message = await interaction.original_response()
+
             for _ in range(15):
                 slot1 = random.choice(emojis)
                 slot2 = random.choice(emojis)
                 slot3 = random.choice(emojis)
                 embed.description = f"**Slots:** {slot1} | {slot2} | {slot3}"
                 await message.edit(embed=embed)
-                await asyncio.sleep(0.3)
-
-            slot1 = data['slots'][0]
-            for _ in range(5):
-                slot2 = random.choice(emojis)
-                slot3 = random.choice(emojis)
-                embed.description = f"**Slots:** {slot1} | {slot2} | {slot3}"
-                await message.edit(embed=embed)
-                await asyncio.sleep(0.6)
-
-            slot2 = data['slots'][1]
-            for _ in range(3):
-                slot3 = random.choice(emojis)
-                embed.description = f"**Slots:** {slot1} | {slot2} | {slot3}"
-                await message.edit(embed=embed)
                 await asyncio.sleep(1)
             
-            slot3 = random.choice(emojis)
-            embed.description = f"**Slots:** {slot1} | {slot2} | {slot3}"
-            await message.edit(embed=embed)
-            await asyncio.sleep(2)
-
-            slot3 = data['slots'][2]
+            slot1 = data['slots'][slot1]
+            slot2 = data['slots'][slot2]
+            slot3 = data['slots'][slot3]
             embed.description = f"**Slots:** {slot1} | {slot2} | {slot3}"
 
             
             embed.color = discord.Color.green() if data['win'] else discord.Color.red()
             embed.add_field(
-                name="You Won!" if data['win'] else "You Lost!",
+                name="You Won!",
                 value=data['message'],
                 inline=False
             )

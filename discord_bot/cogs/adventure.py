@@ -82,7 +82,7 @@ class Adventure(commands.Cog):
                     else:
                         await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
+                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
                 return
             
     @adventure_group.command(name="info", description="Get information about a specific adventure")
@@ -145,7 +145,7 @@ class Adventure(commands.Cog):
                         await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
+                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
                 return
 
 
@@ -201,7 +201,7 @@ class Adventure(commands.Cog):
                         await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
+                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
                 return
 
     async def complete_adventure(self, interaction: discord.Interaction):
@@ -252,7 +252,7 @@ class Adventure(commands.Cog):
                         await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
+                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
                 return
             
         
@@ -309,7 +309,7 @@ class Adventure(commands.Cog):
                         await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
+                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
                 return
 
 

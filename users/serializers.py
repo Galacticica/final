@@ -23,6 +23,34 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['discord_id', 'username', 'level', 'xp', 'money', 'xp_needed']
 
+
+class LevelUpSerializer(serializers.Serializer):
+    '''
+    Serializer for the LevelUp model.
+    This serializer is used to validate the data for leveling up a user.
+    It checks if the user has enough XP to level up and updates the user's level and XP accordingly.
+    '''
+
+    discord_id = serializers.CharField(max_length=255)
+    
+    def validate(self, data):
+        discord_id = data.get('discord_id')
+
+        self.user, created = CustomUser.objects.get_or_create(
+            discord_id=discord_id,
+            defaults={
+                "level": 1,
+                "xp": 0,
+                "money": 100,
+            }
+        )
+
+        if self.user.xp < self.user.xp_needed:
+            raise serializers.ValidationError(f"Not enough XP to level up. Need {self.user.xp_needed - self.user.xp} more XP.")
+        
+        return data
+
+
 class CoinFlipBetSerializer(serializers.Serializer):
     '''
     Serializer for the CoinFlipBet model.
@@ -51,17 +79,17 @@ class CoinFlipBetSerializer(serializers.Serializer):
         if self.user.money < data['bet']:
             raise serializers.ValidationError("Insufficient funds.")
         return data
-
-
-class LevelUpSerializer(serializers.Serializer):
+    
+class SlotsSerializer(serializers.Serializer):
     '''
-    Serializer for the LevelUp model.
-    This serializer is used to validate the data for leveling up a user.
-    It checks if the user has enough XP to level up and updates the user's level and XP accordingly.
+    Serializer for the Slots model.
+    This serializer is used to validate the data for a slot machine game.
+    It checks if the user has enough money to place the bet and creates a new user if they don't exist.
     '''
 
     discord_id = serializers.CharField(max_length=255)
-    
+    bet = serializers.IntegerField(min_value=1)
+
     def validate(self, data):
         discord_id = data.get('discord_id')
 
@@ -74,7 +102,6 @@ class LevelUpSerializer(serializers.Serializer):
             }
         )
 
-        if self.user.xp < self.user.xp_needed:
-            raise serializers.ValidationError(f"Not enough XP to level up. Need {self.user.xp_needed - self.user.xp} more XP.")
-        
+        if self.user.money < data['bet']:
+            raise serializers.ValidationError("Insufficient funds.")
         return data

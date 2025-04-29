@@ -80,7 +80,7 @@ class Leaderboard(commands.Cog):
                         await interaction.response.send_message("Server error occurred.", ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred: {str(e)}", ephemeral=True)
+                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
                 return
 
     @leaderboard_group.command(name="money", description="Display the leaderboard for money")
@@ -106,7 +106,7 @@ class Leaderboard(commands.Cog):
                         await interaction.response.send_message("Server error occurred.", ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred: {str(e)}", ephemeral=True)
+                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
                 return
 
 async def setup(bot):

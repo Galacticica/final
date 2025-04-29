@@ -86,7 +86,7 @@ class General(commands.Cog):
                         await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
+                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
                 return
             
     @user_group.command(name="level_up", description="Level up your user")
@@ -141,7 +141,7 @@ class General(commands.Cog):
                         await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred while communicating with the API: {e}", ephemeral=True)
+                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
                 return
 
 async def setup(bot):

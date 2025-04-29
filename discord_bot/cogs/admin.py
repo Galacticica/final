@@ -96,7 +96,7 @@ class Admin(commands.Cog):
                     else:
                         await ctx.send("An unexpected error occurred. Please try again later.")
             except aiohttp.ClientError as e:
-                await ctx.send(f"An error occurred while communicating with the API: {e}")
+                await ctx.send(f"Network error: {str(e)}", ephemeral=True)
 
     @commands.command(name="give_xp", description="Give XP to a user")
     @commands.is_owner()
@@ -137,7 +137,7 @@ class Admin(commands.Cog):
                     else:
                         await ctx.send("An unexpected error occurred. Please try again later.")
             except aiohttp.ClientError as e:
-                await ctx.send(f"An error occurred while communicating with the API: {e}")
+                await ctx.send(f"Network error: {str(e)}", ephemeral=True)
     
     @commands.command(name="delete_user", description="Delete a user via the API")
     @commands.is_owner()
@@ -169,7 +169,7 @@ class Admin(commands.Cog):
                     else:
                         await ctx.send("An unexpected error occurred. Please try again later.")
             except aiohttp.ClientError as e:
-                await ctx.send(f"An error occurred while communicating with the API: {e}")
+                await ctx.send(f"Network error: {str(e)}", ephemeral=True)
 
 
 async def setup(bot):
