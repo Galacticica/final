@@ -144,6 +144,18 @@ class CompleteAdventureView(APIView):
             xp_reward = random.randint(adventure.xp_min, adventure.xp_max)
             money_reward = random.randint(adventure.reward_min, adventure.reward_max)
 
+            critical_success = random.randint(0, 100)
+            if critical_success < 5:
+                xp_reward *= 2
+                money_reward *= 2
+                message = "Critical success! Double rewards!"
+            elif critical_success < 10:
+                xp_reward *= 1.5
+                money_reward *= 1.5
+                message = "Success! Rewards increased by 50%!"
+            else:
+                message = "Adventure completed successfully!"
+
             user.xp += xp_reward
             user.money += money_reward
             user.save()
@@ -151,7 +163,7 @@ class CompleteAdventureView(APIView):
             current_adventure.delete()
 
             return Response({
-                "message": "Adventure completed successfully!",
+                "message": message,
                 "adventure_name": adventure.name,
                 "xp_reward": xp_reward,
                 "money_reward": money_reward,
