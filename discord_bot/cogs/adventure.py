@@ -86,6 +86,7 @@ class Adventure(commands.Cog):
                 return
             
     @adventure_group.command(name="info", description="Get information about a specific adventure")
+    @discord.app_commands.describe(adventure_name="The name of the adventure")
     async def adventure_info(self, interaction: discord.Interaction, adventure_name: str):
         """
         Command to get information about a specific adventure.
@@ -149,6 +150,7 @@ class Adventure(commands.Cog):
 
 
     @adventure_group.command(name="start", description="Start an adventure")
+    @discord.app_commands.describe(adventure_name="The name of the adventure to start")
     async def start_adventure(self, interaction: discord.Interaction, adventure_name: str):
         """
         Command to start an adventure.

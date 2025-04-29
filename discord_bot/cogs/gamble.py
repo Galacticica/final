@@ -41,6 +41,7 @@ class Gamble(commands.Cog):
 
 
     @gamble_group.command(name="coinflip", description="Flip a coin and place a bet")
+    @discord.app_commands.describe(bet="The amount of money to bet", side="Heads or Tails")
     async def coinflip(self, interaction: discord.Interaction, bet: int, side: str):
         """
         Flip a coin, place a bet, and check if you win or lose.
