@@ -24,6 +24,12 @@ class Adventure(models.Model):
     xp_min = models.IntegerField(default=0)
     xp_max = models.IntegerField(default=0)
 
+    def save(self, *args, **kwargs):
+        xp = int(30 * (1.2 ** (self.required_level - 0.5)))
+        self.xp_min = int(xp * 0.3)
+        self.xp_max = int(xp * 0.5)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.name
     def __repr__(self):
