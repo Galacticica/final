@@ -67,7 +67,7 @@ class SlotsView(APIView):
         if serializer.is_valid():
             bet = serializer.data.get('bet')
             emojis = ['🍒', '🍋', '🍉', '🔔', '💎', '7️⃣']
-            weights = [0.3, 0.3, 0.2, 0.1, 0.09, 0.01]
+            weights = [0.25, 0.25, 0.25, 0.18, 0.06, 0.01]
 
             slot1 = random.choice(emojis)
             slot2 = random.choice(emojis)
@@ -80,7 +80,7 @@ class SlotsView(APIView):
                 ('🍉', '🍉', '🍉'): 3,
                 ('🍋', '🍋', '🍋'): 3,
                 ('🍒', '🍒', '🍒'): 3,
-                ('🍒', '🍒'): 2
+                ('🍒', '🍒'): 2,
             }
 
             if (slot1, slot2, slot3) in winning_combinations:
@@ -89,13 +89,16 @@ class SlotsView(APIView):
             elif (slot1, slot2) in winning_combinations:
                 win = True
                 multiplier = winning_combinations[(slot1, slot2)]
+            elif slot1 == slot2:
+                win = True
+                multiplier = 1.5
             else:
                 win = False
 
             if win:
-                serializer.user.money += bet * multiplier
+                serializer.user.money += int(bet * multiplier)
                 serializer.user.save()
-                message = f"Congratulations! You won {bet * multiplier} coins!"
+                message = f"Congratulations! You won {int(bet * multiplier)} coins!"
             else:
                 serializer.user.money -= bet
                 serializer.user.save()

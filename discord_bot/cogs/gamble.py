@@ -162,19 +162,19 @@ class Gamble(commands.Cog):
                 slot3 = random.choice(emojis)
                 embed.description = f"**Slots:** {slot1} | {slot2} | {slot3}"
                 await message.edit(embed=embed)
-                await asyncio.sleep(0.6)
+                await asyncio.sleep(0.5)
 
             slot2 = data['slots'][1]
             for _ in range(3):
                 slot3 = random.choice(emojis)
                 embed.description = f"**Slots:** {slot1} | {slot2} | {slot3}"
                 await message.edit(embed=embed)
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.7)
             
             slot3 = random.choice(emojis)
             embed.description = f"**Slots:** {slot1} | {slot2} | {slot3}"
             await message.edit(embed=embed)
-            await asyncio.sleep(2)
+            await asyncio.sleep(1)
 
             slot3 = data['slots'][2]
             embed.description = f"**Slots:** {slot1} | {slot2} | {slot3}"
