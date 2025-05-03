@@ -37,6 +37,8 @@ class Adventure(models.Model):
         self.reward_min = int(money * 0.75)
         self.reward_max = int(money * 1.25)
 
+        self.time_to_complete = int(25 * self.required_level ** 2 + 125)
+
         super().save(*args, **kwargs)
 
     def __str__(self):
