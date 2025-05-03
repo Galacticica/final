@@ -154,7 +154,7 @@ class Gamble(commands.Cog):
                 slot3 = random.choice(emojis)
                 embed.description = f"**Slots:** {slot1} | {slot2} | {slot3}"
                 await message.edit(embed=embed)
-                await asyncio.sleep(0.3)
+                await asyncio.sleep(0.2)
 
             slot1 = data['slots'][0]
             for _ in range(5):
