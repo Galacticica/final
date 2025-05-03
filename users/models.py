@@ -9,6 +9,7 @@ Description: Django models for the Users app.
 
 from django.db import models
 from adventures.models import Adventure
+from gear.models import Gear
 from typing import TYPE_CHECKING
 
 
@@ -53,3 +54,13 @@ class CurrentAdventure(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.adventure.name}"
+    
+class OwnedItem(models.Model):
+    '''
+    Model representing an item owned by a user.
+    Each user can own multiple items
+    '''
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='owned_items')
+    item_id = models.IntegerField()
+    

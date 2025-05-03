@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.discord',
     'adventures',
     'users',
+    'gear',
 ]
 
 MIDDLEWARE = [
