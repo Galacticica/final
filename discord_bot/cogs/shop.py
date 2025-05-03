@@ -152,7 +152,18 @@ class Shop(commands.Cog):
             except aiohttp.ClientError as e:
                 await interaction.response.send_message(f"An error occurred: {e}")
                 
+    @shop_group.command(name="purchase", description="Purchase an item from the shop")
+    @discord.app_commands.describe(item_name="Name of the item")
+    async def purchase(self, interaction: discord.Interaction, item_name: str):
+        """
+        Command to purchase an item from the shop.
+        """
 
+        api_url = "http://127.0.0.1:8000/gear/purchase/"
+        payload = {
+            "discord_id": str(interaction.user.id),
+            "gear_name": item_name
+        }
 
 
 

@@ -39,3 +39,20 @@ class GearDetailView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+class GearPurchaseView(APIView):
+    '''
+    View to handle gear purchase.
+    This view requires a gear_name in the request data.
+    '''
+
+    def post(self, request):
+        gear_name = request.data.get('gear_name').title()
+        discord_id = request.data.get('discord_id')
+
+        if not gear_name or not discord_id:
+            return Response({"error": "gear_name and discord_id are required"}, status=status.HTTP_400_BAD_REQUEST)
+    
+        serializer = cereal.GearPurchaseSerializer(data=request.data)
+
+        if serializer.is_valid():
+            ...
