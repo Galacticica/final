@@ -1,3 +1,11 @@
+"""
+File: adventure.py
+Author: Reagan Zierke
+Date: 2025-05-03
+Description: Adventure commands for the bot.
+This file contains commands related to adventures, including listing, starting, and checking the status of adventures.
+"""
+
 import discord
 from discord.ext import commands
 import aiohttp  
