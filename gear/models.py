@@ -18,9 +18,9 @@ class Gear(models.Model):
         default='weapon'
     )
     cost = models.IntegerField(default=0)
-    xp_bonus = models.IntegerField(default=0)
-    money_bonus = models.IntegerField(default=0)
-    time_bonus = models.IntegerField(default=0)
+    xp_bonus = models.FloatField(default=0.0)
+    money_bonus = models.FloatField(default=0.0)
+    time_bonus = models.FloatField(default=0.0)
 
     def save(self, *args, **kwargs):
         '''
@@ -37,9 +37,9 @@ class Gear(models.Model):
 
         multipliers = gear_type_modifiers.get(self.gear_type)
 
-        self.xp_bonus = int(points * multipliers['xp_bonus'])
-        self.money_bonus = int(points * multipliers['money_bonus'])
-        self.time_bonus = int(points * multipliers['time_bonus'])
+        self.xp_bonus = round(points * multipliers['xp_bonus'], 1)
+        self.money_bonus = round(points * multipliers['money_bonus'], 1)
+        self.time_bonus = round(points * multipliers['time_bonus'], 1)
 
         super().save(*args, **kwargs)
 

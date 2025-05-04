@@ -121,18 +121,24 @@ class Shop(commands.Cog):
                 inline=True
             )
             if data['xp_bonus'] != 0:
+                if data['xp_bonus'] % 1 == 0:
+                    data['xp_bonus'] = int(data['xp_bonus'])
                 embed.add_field(
                     name="XP Bonus",
                     value=f"+{data['xp_bonus']}%",
                     inline=True
                 )
             if data['money_bonus'] != 0:
+                if data['money_bonus'] % 1 == 0:
+                    data['money_bonus'] = int(data['money_bonus'])
                 embed.add_field(
                     name="Money Bonus",
                     value=f"+{data['money_bonus']}%",
                     inline=True
                 )
             if data['time_bonus'] != 0:
+                if data['time_bonus'] % 1 == 0:
+                    data['time_bonus'] = int(data['time_bonus'])
                 embed.add_field(
                     name="Time Bonus",
                     value=f"-{data['time_bonus']}%",

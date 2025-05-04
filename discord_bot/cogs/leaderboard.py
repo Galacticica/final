@@ -47,7 +47,7 @@ class Leaderboard(commands.Cog):
         i = 1
         for user in users:
             embed.add_field(
-                name=f"{1}. {user['username']}",
+                name=f"{i}. {user['username']}",
                 value=f"{type.title()}: {user[type]}",
                 inline=False
             )

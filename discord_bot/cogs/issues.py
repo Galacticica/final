@@ -15,13 +15,15 @@ class Issues(commands.Cog):
         self.role_id = 769387261854351370
         self.welcome_message = ("Thanks for testing my bot! To get started, do /help. If you have any issues, please report them using /report_issue.")
 
+    issue_group = discord.app_commands.Group(name="issues", description="Issue reporting commands")
+
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         """
         Event listener that triggers when a user joins the server.
         Sends a private message and assigns a role to the new member.
         """
-        
+
         try:
             await member.send(self.welcome_message)
         except Exception as e:
@@ -37,7 +39,29 @@ class Issues(commands.Cog):
         else:
             print(f"Role with ID {self.role_id} not found in guild '{guild.name}'.")
 
-    @discord.app_commands.command(name="report_issue", description="Report an issue with the bot")
+
+    @issue_group.command(name="help", description="Shows the help menu")
+    async def help(self, interaction: discord.Interaction):
+        """
+        Command to show the help menu.
+        """
+        
+        embed = discord.Embed(
+            title="Help Menu",
+            description="List of available commands:",
+            color=discord.Color.blue()
+        )
+
+        for command in self.bot.tree.get_commands():
+            embed.add_field(
+                name=f"/{command.name}",
+                value=command.description or "No description available.",
+                inline=False
+            )
+
+        await interaction.response.send_message(embed=embed)
+
+    @issue_group.command(name="report_issue", description="Report an issue with the bot")
     async def report_issue(self, interaction: discord.Interaction, issue: str):
         """
         Command to report an issue with the bot.
