@@ -170,7 +170,72 @@ class Admin(commands.Cog):
                         await ctx.send("An unexpected error occurred. Please try again later.")
             except aiohttp.ClientError as e:
                 await ctx.send(f"Network error: {str(e)}", ephemeral=True)
+
+
+    @commands.command(name="faq", description="faq")
+    @commands.is_owner()
+    async def faq(self, ctx):
+        """
+        Command to display the FAQ.
+        """
+
+        faq_embed = discord.Embed(
+            title="FAQ",
+            description="Frequently Asked Questions",
+            color=discord.Color.blue()
+        )
+
+        faq_embed.add_field(
+            name="How do I get started?",
+            value="To get started, use the `/help` command to see the different categories of commands.",
+            inline=False
+        )
+        faq_embed.add_field(
+            name="How do I report a bug?",
+            value="To report a bug, use the `/report_issue` command.",
+            inline=False
+        )
+
+        faq_embed.add_field(
+            name="How do I view my stats?",
+            value="To view your stats, use the `/user profile` command.",
+            inline=False
+        )
+
+        faq_embed.add_field(
+            name="How do I get money?",
+            value="You can earn money by completing adventures or gambling.",
+            inline=False
+        )
+
+        faq_embed.add_field(
+            name="How do I go on an adventure?",
+            value="To go on an adventure, use the `/adventure start` command.",
+            inline=False
+        )
+
+        faq_embed.add_field(
+            name="How do I get gear?",
+            value="You can get gear by purchasing it from the shop using `/shop purchase` command. To see what is available, use the `/shop list` command.",
+            inline=False
+        )
+
+        faq_embed.add_field(
+            name="How do I get levels?",
+            value="You can get levels by completing adventures and earning XP. You can level up by using the `/user level_up` command.",
+            inline=False
+        )
+
+        faq_embed.add_field(
+            name="How do I gamble?",
+            value="You can gamble by using the `/gamble {game}` command.",
+            inline=False
+        )
         
+         
+
+
+        await ctx.send(embed=faq_embed)
 
 async def setup(bot):
     '''

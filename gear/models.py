@@ -37,9 +37,9 @@ class Gear(models.Model):
 
         multipliers = gear_type_modifiers.get(self.gear_type)
 
-        self.xp_bonus = round(points * multipliers['xp_bonus'], 1)
-        self.money_bonus = round(points * multipliers['money_bonus'], 1)
-        self.time_bonus = round(points * multipliers['time_bonus'], 1)
+        self.xp_bonus = round(points * multipliers['xp_bonus'], 2)
+        self.money_bonus = round(points * multipliers['money_bonus'], 2)
+        self.time_bonus = round(points * multipliers['time_bonus'], 2)
 
         super().save(*args, **kwargs)
 
