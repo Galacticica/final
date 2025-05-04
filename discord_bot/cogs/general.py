@@ -20,6 +20,38 @@ class General(commands.Cog):
     user_group = discord.app_commands.Group(name="user", description="User commands")
 
 
+    @commands.Cog.listener()
+    async def on_member_join(self, member: discord.Member):
+        '''
+        Listener to create a new user in the database when they join the server.
+        '''
+
+        if not member.bot:
+            discord_id = str(member.id)
+            username = member.name
+            api_url = "http://127.0.0.1:8000/users/profile/"
+            payload = {
+                "discord_id": discord_id,
+                "username": username
+            }
+
+            async with aiohttp.ClientSession() as session:
+                try:
+                    async with session.post(api_url, json=payload) as response:
+                        if response.status in range(200, 300):
+                            pass
+                        elif response.status in range(400, 500):
+                            error = await response.json()
+                            error = error['non_field_errors']
+                            print(f"Error: {error[0]}")
+                        else:
+                            print("An unexpected error occurred. Please try again later.")
+                except aiohttp.ClientError as e:
+                    print(f"Network error: {str(e)}")
+
+
+
+
     @user_group.command(name="help", description="Shows the help menu")
     async def help(self, interaction: discord.Interaction):
         """

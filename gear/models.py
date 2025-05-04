@@ -28,9 +28,9 @@ class Gear(models.Model):
         '''
 
         gear_type_modifiers = {
-            'armor':     {'xp_bonus': 0.5, 'money_bonus': 0.15, 'time_bonus': 0.25},
-            'weapon':  {'xp_bonus': 0.25, 'money_bonus': 0.5, 'time_bonus': 0.15},
-            'accessory':   {'xp_bonus': 0.15, 'money_bonus': 0.25, 'time_bonus': 0.5},
+            'armor':     {'xp_bonus': 0.375, 'money_bonus': 0.1125, 'time_bonus': 0.1875},
+            'weapon':  {'xp_bonus': 0.1875, 'money_bonus': 0.375, 'time_bonus': 0.1125},
+            'accessory':   {'xp_bonus': 0.1125, 'money_bonus': 0.1875, 'time_bonus': 0.375},
         }
 
         points = self.cost // 50

@@ -82,7 +82,6 @@ class Admin(commands.Cog):
                             message = data.get("message", "Something went wrong.")
                             await ctx.send(message)
                         except aiohttp.ContentTypeError:
-                            # Handle non-JSON response
                             text = await response.text()
                             await ctx.send(f"Unexpected response from the API: {text}")
                     elif response.status == 400:
@@ -90,7 +89,6 @@ class Admin(commands.Cog):
                             error = await response.json()
                             await ctx.send(f"Error: {error.get('error', 'Invalid request.')}")
                         except aiohttp.ContentTypeError:
-                            # Handle non-JSON error response
                             text = await response.text()
                             await ctx.send(f"Error: {text}")
                     else:
