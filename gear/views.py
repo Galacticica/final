@@ -22,6 +22,7 @@ class ShopListView(APIView):
         serializer = cereal.UnownedGearSerializer(data=request.data)
         if serializer.is_valid():
             gear = serializer.validated_data['gear']
+            gear = sorted(gear, key=lambda item: item.cost)
             serialized_gear = cereal.ShopListSerializer(gear, many=True)
             return Response(serialized_gear.data, status=status.HTTP_200_OK)
         else:
