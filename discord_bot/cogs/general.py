@@ -133,6 +133,11 @@ class General(commands.Cog):
                     if response.status in range(200, 300):
                         data = await response.json()
                         await display_profile(interaction, data)
+                    elif response.status in range(400, 500):
+                        error = await response.json()
+                        error = error['non_field_errors']
+                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        return
                     else:
                         await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
                         return
@@ -185,8 +190,8 @@ class General(commands.Cog):
                         await interaction.response.send_message(embed=embed)
                     elif response.status in range(400, 500):
                         error = await response.json()
-                        error = error.get('error', {}).get('non_field_errors', ["An unknown error occurred."])[0]
-                        await interaction.response.send_message(f"Error: {error}", ephemeral=True)
+                        error = error['non_field_errors']
+                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
                         return
                     else:
                         await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
@@ -242,8 +247,8 @@ class General(commands.Cog):
                         await interaction.response.send_message(embed=embed)
                     elif response.status in range(400, 500):
                         error = await response.json()
-                        error = error.get('error', {}).get('non_field_errors', ["An unknown error occurred."])[0]
-                        await interaction.response.send_message(f"Error: {error}", ephemeral=True)
+                        error = error['non_field_errors']
+                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
                         return
                     else:
                         await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
