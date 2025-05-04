@@ -4,7 +4,6 @@ Author: Reagan Zierke
 Date: 2025-05-03
 Description: Shop commands for the bot.
 This file contains commands related to the shop, such as buying and listing items.
-This functionality is not yet implemented.
 """
 
 

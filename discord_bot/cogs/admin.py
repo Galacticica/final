@@ -170,7 +170,7 @@ class Admin(commands.Cog):
                         await ctx.send("An unexpected error occurred. Please try again later.")
             except aiohttp.ClientError as e:
                 await ctx.send(f"Network error: {str(e)}", ephemeral=True)
-
+        
 
 async def setup(bot):
     '''

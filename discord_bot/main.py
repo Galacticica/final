@@ -16,6 +16,9 @@ import asyncio
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
+intents.guilds = True
+
 
 bot = commands.Bot(command_prefix='$', intents=intents)
 dev_guild = discord.Object(id=756190406642761869)

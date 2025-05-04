@@ -181,8 +181,8 @@ class CompleteAdventureView(APIView):
                     money_bonus = money_gear.data.get('money_bonus', 0)
                     money_reward += int(money_reward * money_bonus / 100)
 
-            user.xp += xp_reward
-            user.money += money_reward
+            user.xp += int(xp_reward)
+            user.money += int(money_reward)
             user.save()
 
             current_adventure.delete()
