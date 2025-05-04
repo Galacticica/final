@@ -222,7 +222,7 @@ class General(commands.Cog):
                         await interaction.response.send_message(embed=embed)
                     elif response.status in range(400, 500):
                         error = await response.json()
-                        error = error['non_field_errors']
+                        error = error['error']['non_field_errors']
                         await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
                         return
                     else:

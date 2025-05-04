@@ -54,7 +54,6 @@ class LevelUpView(APIView):
 
         if not discord_id:
             return Response({"error": "discord_id is required"}, status=status.HTTP_400_BAD_REQUEST)
-        
         serializer = cereal.LevelUpSerializer(data=request.data)
 
         if serializer.is_valid():
