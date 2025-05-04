@@ -107,6 +107,7 @@ class General(commands.Cog):
             embed.add_field(name="Money", value=money, inline=True)
 
             best_gear_data = await _get_best_gear(self, interaction)
+            print(best_gear_data)
             xp_percent = best_gear_data['best_gear_xp']['xp_bonus'] if best_gear_data['best_gear_xp']['xp_bonus'] is not None else 0
             money_percent = best_gear_data['best_gear_money']['money_bonus'] if best_gear_data['best_gear_money']['money_bonus'] is not None else 0
             time_percent = best_gear_data['best_gear_time']['time_bonus'] if best_gear_data['best_gear_time']['time_bonus'] is not None else 0            

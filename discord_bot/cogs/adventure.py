@@ -136,10 +136,8 @@ class Adventure(commands.Cog):
             
 
         async with aiohttp.ClientSession() as session:
-            print("Connecting to API...")
             try:
                 async with session.get(api_url, json=payload) as response:
-                    print(f"Response status: {response.status}")
                     if response.status in range(200, 300):
                         data = await response.json()
                         embed = format_adventure_info(data)

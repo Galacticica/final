@@ -145,7 +145,7 @@ class BestGearSerializer(serializers.Serializer):
 
         best_gear_xp = Gear.objects.filter(id__in=owned_gear_ids).order_by('-xp_bonus').first() or None
         best_gear_money = Gear.objects.filter(id__in=owned_gear_ids).order_by('-money_bonus').first() or None
-        best_gear_time = Gear.objects.filter(id__in=owned_gear_ids).order_by('time_bonus').first() or None
+        best_gear_time = Gear.objects.filter(id__in=owned_gear_ids).order_by('-time_bonus').first() or None
 
         data['best_gear_xp'] = best_gear_xp
         data['best_gear_money'] = best_gear_money
