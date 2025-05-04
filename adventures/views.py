@@ -7,13 +7,12 @@ This file contains views for getting a list of adventures, starting an adventure
 checking the status of an adventure, and completing an adventure.
 """
 
-
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Adventure
 from . import serializers as cereal
+from gear.serializers import BestGearSerializer, ShopListSerializer
 from users.models import CurrentAdventure
 from django.utils import timezone
 import random
@@ -64,13 +63,26 @@ class StartAdventureView(APIView):
         if not discord_id or not adventure_name:
             return Response({"error": "discord_id and adventure_name are required"}, status=status.HTTP_400_BAD_REQUEST)
 
-
         serializer = cereal.AdventureStartSerializer(data=request.data)
         
         if serializer.is_valid():
             user = serializer.user
             adventure = Adventure.objects.get(name=adventure_name)
-            current_adventure = CurrentAdventure.objects.create(user=user, adventure=adventure, time_left=adventure.time_to_complete)
+
+            best_gear = BestGearSerializer(data=request.data)
+            if best_gear.is_valid():
+                best_gear_time = best_gear.validated_data.get('best_gear_time', None)
+                if best_gear_time:
+                    time_gear = ShopListSerializer(best_gear_time)
+                    time_bonus = time_gear.data.get('time_bonus', 0)
+                else:
+                    time_bonus = 0
+
+                time_left = adventure.time_to_complete - (adventure.time_to_complete * time_bonus / 100)
+            else:
+                time_left = adventure.time_to_complete  
+
+            current_adventure = CurrentAdventure.objects.create(user=user, adventure=adventure, time_left=time_left)
             current_adventure_serializer = cereal.CurrentAdventureSerializer(current_adventure)
 
             return Response(current_adventure_serializer.data, status=status.HTTP_201_CREATED)
@@ -98,7 +110,6 @@ class AdventureStatusView(APIView):
             user = seralizer.user
 
 
-            #Update the time left for the adventure
             current_adventure = CurrentAdventure.objects.filter(user=user).first()
             time_started = current_adventure.time_started
             current_time = timezone.now()
@@ -156,6 +167,20 @@ class CompleteAdventureView(APIView):
             else:
                 message = "Adventure completed successfully!"
 
+            best_gear = BestGearSerializer(data=request.data)
+            if best_gear.is_valid():
+                best_gear_xp = best_gear.validated_data.get('best_gear_xp', None)
+                if best_gear_xp:
+                    xp_gear = ShopListSerializer(best_gear_xp)
+                    xp_bonus = xp_gear.data.get('xp_bonus', 0)
+                    xp_reward += int(xp_reward * xp_bonus / 100)
+                
+                best_gear_money = best_gear.validated_data.get('best_gear_money', None)
+                if best_gear_money:
+                    money_gear = ShopListSerializer(best_gear_money)
+                    money_bonus = money_gear.data.get('money_bonus', 0)
+                    money_reward += int(money_reward * money_bonus / 100)
+
             user.xp += xp_reward
             user.money += money_reward
             user.save()
@@ -170,5 +195,4 @@ class CompleteAdventureView(APIView):
             }, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        
+

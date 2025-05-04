@@ -69,7 +69,7 @@ class Shop(commands.Cog):
             for item in data: 
                 embed.add_field(
                     name=item['name'],
-                    value=f"Cost: {item['cost']} {f"\nXP Bonus: +{item['xp_bonus']}%" if item['xp_bonus'] != 0 else ""} {f"\nReward Bonus: +{item['money_bonus']}%" if item['money_bonus'] != 0 else ""} {f"\nTime Bonus: -{item['time_bonus']}%" if item['time_bonus'] != 0 else ""}",
+                    value=f"Cost: {item['cost']}",
                     inline=False
                 )
 
@@ -113,7 +113,7 @@ class Shop(commands.Cog):
             embed = discord.Embed(
                 title=data['name'],
                 description=data['description'],
-                color=discord.Color.green()
+                color=discord.Color.orange()
             )
 
             embed.add_field(
@@ -173,12 +173,21 @@ class Shop(commands.Cog):
             "gear_name": item_name
         }
 
+        def format_embed(data):
+            embed = discord.Embed(
+                title="Purchase Successful",
+                description=f"You have successfully purchased {data['name']}!",
+                color=discord.Color.green()
+            )
+            return embed
+
         async with aiohttp.ClientSession() as session:
             try:
                 async with session.post(api_url, json=payload) as response:
                     if response.status in range(200,300):
                         data = await response.json()
-                        print(data)
+                        embed = format_embed(data)
+                        await interaction.response.send_message(embed=embed)
                     elif response.status in range(400,500):
                         error = await response.json()
                         error = error['non_field_errors']
