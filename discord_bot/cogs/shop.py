@@ -56,6 +56,8 @@ class Shop(commands.Cog):
         """
 
         api_url = "http://127.0.0.1:8000/gear/shop/"
+        payload = {
+            "discord_id": str(interaction.user.id)}
 
         def format_embed(data):
             embed = discord.Embed(
@@ -76,7 +78,7 @@ class Shop(commands.Cog):
 
         async with aiohttp.ClientSession() as session:
             try:
-                async with session.get(api_url) as response:
+                async with session.get(api_url, json=payload) as response:
                     if response.status in range(200,300):
                         data = await response.json()
                         if data and isinstance(data, list) and len(data) > 0:
@@ -85,7 +87,10 @@ class Shop(commands.Cog):
                         else:
                             await interaction.response.send_message("No items for sale at the moment.")
                     elif response.status in range(400,500):
-                        await interaction.response.send_message("Client error occurred.") 
+                        error = await response.json()
+                        error = error['non_field_errors']
+                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        return 
                     else:
                         await interaction.response.send_message("Server error occurred.")
             except aiohttp.ClientError as e:
@@ -146,7 +151,10 @@ class Shop(commands.Cog):
                         embed = format_embed(data)
                         await interaction.response.send_message(embed=embed)
                     elif response.status in range(400,500):
-                        await interaction.response.send_message("Client error occurred.")
+                        error = await response.json()
+                        error = error['non_field_errors']
+                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        return
                     else:
                         await interaction.response.send_message("Server error occurred.")
             except aiohttp.ClientError as e:
@@ -164,6 +172,22 @@ class Shop(commands.Cog):
             "discord_id": str(interaction.user.id),
             "gear_name": item_name
         }
+
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.post(api_url, json=payload) as response:
+                    if response.status in range(200,300):
+                        data = await response.json()
+                        print(data)
+                    elif response.status in range(400,500):
+                        error = await response.json()
+                        error = error['non_field_errors']
+                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        return
+                    else:
+                        await interaction.response.send_message("Server error occurred.")
+            except aiohttp.ClientError as e:
+                await interaction.response.send_message(f"An error occurred: {e}")
 
 
 

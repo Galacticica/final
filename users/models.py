@@ -5,17 +5,9 @@ Date: 2025-04-27
 Description: Django models for the Users app.
 """
 
-
-
 from django.db import models
 from adventures.models import Adventure
 from gear.models import Gear
-from typing import TYPE_CHECKING
-
-
-if TYPE_CHECKING:
-    from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
-
 
 class CustomUser(models.Model):
     '''
@@ -34,11 +26,9 @@ class CustomUser(models.Model):
         base_xp = 30
         return int(base_xp * (1.2 ** (self.level - 1)))
 
-
-    current_adventure: 'ReverseOneToOneDescriptor'
-
     def __str__(self):
-        return self.username
+        user_name = self.username if self.username else "Unknown User"
+        return f"{user_name} (ID: {self.discord_id})"
     
 
 class CurrentAdventure(models.Model):
@@ -53,7 +43,9 @@ class CurrentAdventure(models.Model):
     time_started = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.adventure.name}"
+        user_name = self.user.username if self.user.username else "Unknown User"
+        adventure_name = self.adventure.name if self.adventure and self.adventure.name else "Unknown Adventure"
+        return f"{user_name} - {adventure_name}"
     
 class OwnedItem(models.Model):
     '''
@@ -62,5 +54,4 @@ class OwnedItem(models.Model):
     '''
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='owned_items')
-    item_id = models.IntegerField()
-    
+    item = models.ForeignKey(Gear, on_delete=models.CASCADE)

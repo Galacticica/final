@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from . import serializers as cereal
 from .models import Gear
+from users.models import OwnedItem
 
 class ShopListView(APIView):
     """
@@ -14,9 +15,20 @@ class ShopListView(APIView):
         List all gear items.
         """
 
-        gear_items = Gear.objects.all()
-        serializer = cereal.ShopListSerializer(gear_items, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        discord_id = request.data.get('discord_id')
+
+        if not discord_id:
+            return Response({"error": "discord_id required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = cereal.UnownedGearSerializer(data=request.data)
+        if serializer.is_valid():
+            gear = serializer.validated_data['gear']
+            serialized_gear = cereal.ShopListSerializer(gear, many=True)
+            return Response(serialized_gear.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        
     
 class GearDetailView(APIView):
     '''
@@ -32,7 +44,6 @@ class GearDetailView(APIView):
         
         if serializer.is_valid():
             json_serializer = cereal.ShopListSerializer
-            print(serializer.validated_data)
             gear = serializer.validated_data['gear']
             serialized_gear = json_serializer(gear)
             return Response(serialized_gear.data, status=status.HTTP_200_OK)
@@ -55,4 +66,18 @@ class GearPurchaseView(APIView):
         serializer = cereal.GearPurchaseSerializer(data=request.data)
 
         if serializer.is_valid():
-            ...
+            user = serializer.user
+            gear = serializer.validated_data['gear']
+
+            user.money -= gear.cost
+            user.save()
+
+            OwnedItem.objects.create(user=user, item=gear)
+
+            gear_serializer = cereal.ShopListSerializer(gear)
+            return Response(gear_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            
+            

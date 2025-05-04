@@ -12,3 +12,6 @@ class Gear(models.Model):
     xp_bonus = models.IntegerField(default=0)
     money_bonus = models.IntegerField(default=0)
     time_bonus = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name

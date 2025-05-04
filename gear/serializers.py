@@ -2,18 +2,17 @@ from rest_framework import serializers
 from users.models import CustomUser, OwnedItem
 from .models import Gear
 
-
+ 
 class ShopListSerializer(serializers.ModelSerializer):
     '''
-    Serializer for listing gear items.
-    This serializer is used to serialize gear data for the gear list endpoint.
+    Serializer for the shop list.
+    This serializer is used to serialize gear data for the shop list endpoint.
     '''
     
     class Meta:
         model = Gear
-        fields = ['id', 'name', 'description', 'cost', 'xp_bonus', 'money_bonus', 'time_bonus']
+        fields = ['id', 'name', 'cost', 'description', 'xp_bonus', 'money_bonus', 'time_bonus']
 
-    
 class GearDetailSerializer(serializers.Serializer):
     '''
     Serializer for gear details.
@@ -42,7 +41,6 @@ class GearPurchaseSerializer(serializers.Serializer):
     discord_id = serializers.CharField(max_length=255)
     gear_name = serializers.CharField(source='name')
 
-
     def validate(self, data):
         gear_name = data.get('name').title()
         discord_id = data.get('discord_id')
@@ -61,15 +59,39 @@ class GearPurchaseSerializer(serializers.Serializer):
             }
         )
         
-        if OwnedItem.objects.filter(user=self.user, gear=gear).exists():
+        if OwnedItem.objects.filter(user=self.user, item=gear).exists():
             raise serializers.ValidationError("User already owns this gear.")
         
         if self.user.money < gear.cost:
             raise serializers.ValidationError("User does not have enough money to purchase this gear.")
         
         data['gear'] = gear
-        data['user'] = self.user
         return data
-        
 
-    
+
+class UnownedGearSerializer(serializers.Serializer):
+    '''
+    Serializer to list all gear items not owned by the user.
+    '''
+    discord_id = serializers.CharField(max_length=255)
+
+    def validate(self, data):
+        discord_id = data.get('discord_id')
+
+        # Get or create the user
+        self.user, created = CustomUser.objects.get_or_create(
+            discord_id=discord_id,
+            defaults={
+                "level": 1,
+                "xp": 0,
+                "money": 100,
+            }
+        )
+
+        owned_gear_ids = OwnedItem.objects.filter(user=self.user).values_list('item_id', flat=True)
+
+        unowned_gear = Gear.objects.exclude(id__in=owned_gear_ids)
+
+        data['gear'] = unowned_gear
+        return data
+
