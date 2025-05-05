@@ -3,6 +3,7 @@ File: issues.py
 Author: Reagan Zierke
 Date: 2025-05-04
 Description: A development file for bot testers to report issues and have them sent to me via Discord.
+This file is not intended for production use and is for development purposes only.
 """
 
 import discord

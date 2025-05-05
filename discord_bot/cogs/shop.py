@@ -27,6 +27,18 @@ class Shop(commands.Cog):
         hours, minutes = divmod(minutes, 60)
         return f"{int(hours)}h {int(minutes)}m {int(seconds)}s" 
     
+    def format_error(self, error):
+        '''
+        Helper function to format error messages.
+        '''
+        
+        embed = discord.Embed(
+            title="Error",
+            description=error,
+            color=discord.Color.red()
+        )
+        return embed
+    
     @shop_group.command(name="help", description="Shows the help menu")
     async def help(self, interaction: discord.Interaction):
         """
@@ -87,13 +99,17 @@ class Shop(commands.Cog):
                             await interaction.response.send_message("No items for sale at the moment.")
                     elif response.status in range(400,500):
                         error = await response.json()
-                        error = error['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        error = error['non_field_errors'][0]
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return 
                     else:
-                        await interaction.response.send_message("Server error occurred.")
+                        error = "Server error occurred."
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
+                        return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred: {e}")
+                error = f"Network error: {str(e)}"
+                await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
+                return
         
     @shop_group.command(name="item_detail", description="Get details about a specific item")
     @discord.app_commands.describe(item_name="Name of the item")
@@ -157,13 +173,17 @@ class Shop(commands.Cog):
                         await interaction.response.send_message(embed=embed)
                     elif response.status in range(400,500):
                         error = await response.json()
-                        error = error['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        error = error['non_field_errors'][0]
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("Server error occurred.")
+                        error = "Server error occurred."
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
+                        return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred: {e}")
+                error = f"Network error: {str(e)}"
+                await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
+                return
                 
     @shop_group.command(name="purchase", description="Purchase an item from the shop")
     @discord.app_commands.describe(item_name="Name of the item")
@@ -195,14 +215,17 @@ class Shop(commands.Cog):
                         await interaction.response.send_message(embed=embed)
                     elif response.status in range(400,500):
                         error = await response.json()
-                        error = error['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        error = error['non_field_errors'][0]
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("Server error occurred.")
+                        error = "Server error occurred."
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
+                        return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"An error occurred: {e}")
-
+                error = f"Network error: {str(e)}"
+                await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
+                return
 
 
 async def setup(bot):

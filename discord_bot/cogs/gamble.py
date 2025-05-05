@@ -17,6 +17,17 @@ class Gamble(commands.Cog):
 
     gamble_group = discord.app_commands.Group(name="gamble", description="Gambling commands")
 
+    def format_error(self, error):
+        '''
+        Helper function to format error messages.
+        '''
+        
+        embed = discord.Embed(
+            title="Error",
+            description=error,
+            color=discord.Color.red()
+        )
+        return embed
 
     @gamble_group.command(name="help", description="Shows the help menu")
     async def help(self, interaction: discord.Interaction):
@@ -97,13 +108,15 @@ class Gamble(commands.Cog):
                         await interaction.response.send_message(embed=embed)
                     elif response.status in range (400, 500):
                         error = await response.json()
-                        error = error['error']['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        error = error['error']['non_field_errors'][0]
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
+                        error = "An unexpected error occurred. Please try again later."
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
+                error = f"Network error: {str(e)}"
+                await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
     
     @gamble_group.command(name="slots", description="Play a slot machine game")
     @discord.app_commands.describe(bet="The amount of money to bet")
@@ -199,13 +212,15 @@ class Gamble(commands.Cog):
 
                     elif response.status in range(400, 500):
                         error = await response.json()
-                        error = error['error']['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        error = error['error']['non_field_errors'][0]
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
+                        error = "An unexpected error occurred. Please try again later."
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
+                error = f"Network error: {str(e)}"
+                await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
 
 
 

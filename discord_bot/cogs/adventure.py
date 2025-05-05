@@ -24,6 +24,19 @@ class Adventure(commands.Cog):
         minutes, seconds = divmod(seconds, 60)
         hours, minutes = divmod(minutes, 60)
         return f"{int(hours)}h {int(minutes)}m {int(seconds)}s" 
+    
+    def format_error(self, error):
+        '''
+        Helper function to format error messages.
+        '''
+        
+        embed = discord.Embed(
+            title="Error",
+            description=error,
+            color=discord.Color.red()
+        )
+        return embed
+
 
 
     @adventure_group.command(name="help", description="Shows the help menu")
@@ -86,11 +99,20 @@ class Adventure(commands.Cog):
                             embed = format_adventure_list(data)
                             await interaction.response.send_message(embed=embed)
                         else:
-                            await interaction.response.send_message("No adventures available at the moment.")
+                            error = "No adventures available at the moment."
+                            await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
+                    elif response.status in range(400, 500):
+                        error = await response.json()
+                        error = error['non_field_errors']
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
+                        return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
+                        error = "An unexpected error occurred. Please try again later."
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
+                        return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
+                error = f"Network error: {str(e)}"
+                await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                 return
             
     @adventure_group.command(name="info", description="Get information about a specific adventure")
@@ -144,14 +166,16 @@ class Adventure(commands.Cog):
                         await interaction.response.send_message(embed=embed)
                     elif response.status in range(400, 500):
                         error = await response.json()
-                        error = error['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        error = error['non_field_errors'][0]
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
+                        error = "An unexpected error occurred. Please try again later."
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
+                error = f"Network error: {str(e)}"
+                await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                 return
 
 
@@ -200,14 +224,16 @@ class Adventure(commands.Cog):
                         await interaction.response.send_message(embed=embed)
                     elif response.status in range(400, 500):
                         error = await response.json()
-                        error = error['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        error = error['non_field_errors'][0]
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
+                        error = "An unexpected error occurred. Please try again later."
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
+                error = f"Network error: {str(e)}"
+                await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                 return
 
     async def complete_adventure(self, interaction: discord.Interaction):
@@ -251,14 +277,16 @@ class Adventure(commands.Cog):
                         await interaction.response.send_message(embed=embed)
                     elif response.status in range(400, 500):
                         error = await response.json()
-                        error = error['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        error = error['non_field_errors'][0]
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
+                        error = "An unexpected error occurred. Please try again later."
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
+                error = f"Network error: {str(e)}"
+                await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                 return
             
         
@@ -308,14 +336,16 @@ class Adventure(commands.Cog):
                             return
                     elif response.status in range(400, 500):
                         error = await response.json()
-                        error = error['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        error = error['non_field_errors'][0]
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
+                        error = "An unexpected error occurred. Please try again later."
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
+                error = f"Network error: {str(e)}"
+                await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                 return
 
 

@@ -19,6 +19,17 @@ class General(commands.Cog):
         
     user_group = discord.app_commands.Group(name="user", description="User commands")
 
+    def format_error(self, error):
+        '''
+        Helper function to format error messages.
+        '''
+        
+        embed = discord.Embed(
+            title="Error",
+            description=error,
+            color=discord.Color.red()
+        )
+        return embed
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
@@ -111,13 +122,15 @@ class General(commands.Cog):
                         elif response.status in range(400, 500):
                             error = await response.json()
                             error = error.get('error', {}).get('non_field_errors', ["An unknown error occurred."])[0]
-                            await interaction.response.send_message(f"Error: {error}", ephemeral=True)
+                            await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                             return
                         else:
-                            await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
+                            error = "An unexpected error occurred. Please try again later."
+                            await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                             return
                 except aiohttp.ClientError as e:
-                    await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
+                    error = f"Network error: {str(e)}"
+                    await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                     return
 
         async def display_profile(interaction, data):
@@ -167,14 +180,16 @@ class General(commands.Cog):
                         await display_profile(interaction, data)
                     elif response.status in range(400, 500):
                         error = await response.json()
-                        error = error['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        error = error['non_field_errors'][0]
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
+                        error = "An unexpected error occurred. Please try again later."
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
+                error = f"Network error: {str(e)}"
+                await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                 return
             
     @user_group.command(name="level_up", description="Level up your user")
@@ -222,14 +237,16 @@ class General(commands.Cog):
                         await interaction.response.send_message(embed=embed)
                     elif response.status in range(400, 500):
                         error = await response.json()
-                        error = error['error']['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        error = error['error']['non_field_errors'][0]
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
+                        error = "An unexpected error occurred. Please try again later."
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
+                error = f"Network error: {str(e)}"
+                await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                 return
 
     @user_group.command(name="view_gear", description="View your owned gear")
@@ -279,14 +296,16 @@ class General(commands.Cog):
                         await interaction.response.send_message(embed=embed)
                     elif response.status in range(400, 500):
                         error = await response.json()
-                        error = error['non_field_errors']
-                        await interaction.response.send_message(f"Error: {error[0]}", ephemeral=True)
+                        error = error['non_field_errors'][0]
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
                     else:
-                        await interaction.response.send_message("An unexpected error occurred. Please try again later.", ephemeral=True)
+                        error = "An unexpected error occurred. Please try again later."
+                        await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                         return
             except aiohttp.ClientError as e:
-                await interaction.response.send_message(f"Network error: {str(e)}", ephemeral=True)
+                error = f"Network error: {str(e)}"
+                await interaction.response.send_message(embed=self.format_error(error), ephemeral=True)
                 return
 
 
